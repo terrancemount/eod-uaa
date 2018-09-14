@@ -1,0 +1,31 @@
+{
+  "name": "engineering-on-display",
+  "version": "0.0.0",
+  "description": "University of Alaska energy dashboard for the Engineering and Industry Building.",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "express": "4.16.3",
+    "mysql": "2.16.0"
+  },
+  "engines": {
+    "node": "10.6.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Engineering on Display",
+    "University of Alaska Anchorage",
+    "College of Engineering",
+    "Surge",
+    "Engineering and Industry Building",
+    "Energy Dashboard",
+    "Seimens",
+    "heroku"
+  ],
+  "author": "Terrance Mount <thorelore@gmail.com> (http://terrancemount.com)",
+  "license": "ISC",
+  "devDependencies": {}
+}
