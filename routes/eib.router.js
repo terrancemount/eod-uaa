@@ -1,5 +1,5 @@
 const express = require('express');
-const { executeQuery } = require('../mysqlHandler');
+const { executeQuery } = require('../db');
 
 /**
  * Build a router to be used with app.js
