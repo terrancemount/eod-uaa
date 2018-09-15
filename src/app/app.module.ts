@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { ChartComponent } from './dashboard/chart/chart.component';
+import { ChartComponent } from './chart/chart.component';
 import { SensorService } from './services/sensor.service';
 
 @NgModule({

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, DoCheck } from '@angular/core';
-import { SensorService } from '../../services/sensor.service';
+import { SensorService } from '../services/sensor.service';
 import * as moment from 'moment';
-import { Chart } from '../../../../node_modules/chart.js';
+import { Chart } from '../../../node_modules/chart.js';
 
 @Component({
   selector: 'app-chart',
