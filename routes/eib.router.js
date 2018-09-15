@@ -21,7 +21,7 @@ const routes = function(pool){
                 
        executeQuery(pool, query, function(err, rows){
         if(err){
-            res.status(err.status).send(err.message);
+            res.status(500).send(err.message);
         } else {
             res.status(200).json(mapSqlResultsToArrays(rows));
         }
@@ -35,8 +35,8 @@ function mapSqlResultsToArrays(results){
     let remap = [];
     
     console.log(results);
-    for(let key in results.rows[0]){
-        remap.push(results.rows.map(x => x[key]));
+    for(let key in results[0]){
+        remap.push(results.map(x => x[key]));
     }
 
     return remap;

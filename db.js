@@ -21,18 +21,18 @@ function executeQuery(pool, query, callback) {
 	pool.getConnection(function (err, connection) {
 		if (err) {
 			connection.release();
-			callback({ status: 500, message: "Error: while connection to database." }, null);
+			callback("Error: while connection to database.", null);
 		}
 		connection.query(query, function (err, rows) {
 			connection.release();
 			if (err) {
-				callback({ status: 500, message: "Error: while quering the database." }, null);
+				callback("Error: while quering the database.", null);
 			}
-			callback(null, { rows });
+			callback(null, rows);
 		});
 		connection.on('error', function (err) {
 			connection.release();
-			callback({ status: 500, message: "Error: unknown error happenend when communicating with database." }, null);
+			callback("Error: unknown error happenend when communicating with database.", null);
 			return;
 		});
 	});
