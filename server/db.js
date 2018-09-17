@@ -13,33 +13,31 @@ const pool = mysql.createPool({
 
 /**
  * Executes a query to the mysql pool connection then callback with results.
- * @param {*} pool is the mysql pool to connect to.
- * @param {*} query is a string to query with.
- * @param {*} callback will be called with an err and rows parameters.
+ * @param {*} pool is the mysql pool connection.
+ * @param {*} query is the query string to run on the mysql pool connection.
+ * @param {*} res is the response object from express.
+ * @param {*} success callback function called on valid query response.
  */
-function executeQuery(pool, query, callback) {
+function executeQuery(query, res, success) {
 	pool.getConnection(function (err, connection) {
 		if (err) {
-			connection.release();
-			callback("Error: while connection to database.", null);
+      connection.release();
+      return res.status(500).send("Error while connecting to database.");
 		}
 		connection.query(query, function (err, rows) {
-			connection.release();
-			if (err) {
-				callback("Error: while quering the database.", null);
-			}
-			callback(null, rows);
+      connection.release();
+
+      if (err) {
+        return res.status(500).send("Error while quering the database.");
+      }
+
+      success(rows);
 		});
 		connection.on('error', function (err) {
-			connection.release();
-			callback("Error: unknown error happenend when communicating with database.", null);
-			return;
+      return res.status(500).send("Error from mysql connection pool.");
 		});
 	});
 }
 
 
-module.exports = {
-	pool,
-	executeQuery,
-}
+module.exports = executeQuery;

@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const eibRouter = require('./routes/eib.router');
-const { pool } = require('./db');
+const sensorReadingRouter = require('./routes/sensor-readings.router');
 const path = require('path');
 
 const app = express();
@@ -20,7 +20,9 @@ app.use(function (req, res, next) {
 });
 
 //load the router for eib
-app.use('/api/eib', eibRouter(pool));
+app.use('/api/eib', eibRouter());
+
+app.use('/api/sensor-readings', sensorReadingRouter());
 
 //load this if someone hit just /api
 //todo: make an api help page.
@@ -33,7 +35,6 @@ app.use(express.static('dist'));
 //use local redirection for the angular app
 //must be last in middleware
 app.get('/*', (req, res) => {
-  console.log(path.join(__dirname, '../dist/index.html'));
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 })
 
