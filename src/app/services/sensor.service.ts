@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable, range, throwError, interval } from 'rxjs';
 import { environment } from '../../environments/environment'
 import { map, filter, catchError, tap } from 'rxjs/operators';
+import * as cleanTime from '../../../shared/cleanTime';
 
 @Injectable({
   providedIn: 'root'
@@ -35,8 +36,6 @@ export class SensorService {
     }, 1000);
   }
 
-
-
   /**
    * Get the sensor reading array from the service once the service has retrieved it from the server.
    * @param callback for when the request is complete or gives an error after wait time in seconds
@@ -44,7 +43,7 @@ export class SensorService {
   getSensorReadingArray(callback) {
     if (!this.sensorReadings.length) { //if noting in sensorReadings then
 
-      let time = this.floorCurrentTimeToFifteenMinutes();
+      let time = cleanTime(Date.now());
       let ticks = this.numOfTicks;
 
       this.requestSensorReadingsFromServer(time, ticks, (err, data) => {
@@ -55,14 +54,14 @@ export class SensorService {
           callback(err, data);
         }
       });
+
       this.startQueryTimer(); //start keeping track of queries
+
     } else {
       callback(null, this.sensorReadings);
     }
   }
 
-  // let ticks = this.calcTicksNeeded(floorCurrentTime);
-  //let floorCurrentTime = this.floorTimeFifteenMinutes();
 
   /**
    * Get the sensor readings from the server to store in SensorService
@@ -75,16 +74,15 @@ export class SensorService {
       .set('ticks', ticks.toString());
 
     //get observable from http module
-    let obs = this.http.get(environment.serverURL + `/api/eib`, { params: params }).pipe(
+    this.http.get(environment.serverURL + `/api/eib`, { params: params }).pipe(
       //tap(data => console.log(JSON.stringify(data))),
       catchError(this.handleError)
-    );
-
-    //subscribe to the observable and store the sensor readings in an array for future use.
-    obs.subscribe(
+    )
+    .subscribe(
       data => {
         results = <any>data;
       },
+      //todo: make error logger
       error => callback({ message: `Error with requesting sensor readings ${error}` }, null),
       () => { callback(null, results); }
     );
@@ -121,16 +119,5 @@ export class SensorService {
 
     let tickDiff = (comptime - lastTime) / (1000 * 60 * 15);
     return Math.min(Math.trunc(tickDiff), this.numOfTicks); //max number of ticks allowed is in numberOfTicks var
-  }
-
-
-
-  floorCurrentTimeToFifteenMinutes() {
-    let dt = new Date();
-    let minutes = Math.floor(dt.getMinutes() / 15) * 15;
-    dt.setMinutes(minutes);
-    dt.setSeconds(0);
-    dt.setMilliseconds(0);
-    return dt.getTime();
   }
 }

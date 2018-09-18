@@ -1,5 +1,6 @@
 const express = require('express');
 const executeQuery = require('../db');
+const cleantime = require('../../shared/cleanTime');
 
 /**
  * Build a router to be used with app.js
@@ -10,13 +11,13 @@ const routes = function(){
     //get EIB's sensor readings.
     router.route('/')
     .get((req, res) => {
-        const end = req.query.end || floorTimeFifteenMinutes(Date.now());
+        const end = req.query.end || cleantime(Date.now());
         const start = req.query.start || oneWeekPrior(end);
 
         const query = `
         select
           unix_timestamp(sr_dt) * 1000,
-          sr_ele_dem,
+          sr_ele_use,
           sr_ngs_use,
           sr_ots_tmp
         from sensor_reading_tb;`;
@@ -38,14 +39,6 @@ function mapSqlResultsToArrays(results){
     return remap;
 }
 
-function floorTimeFifteenMinutes(time){
-    let dt = new Date(time);
-    let minutes = Math.floor(dt.getMinutes()/15) * 15;
-    dt.setMinutes(minutes);
-    dt.setSeconds(0);
-    dt.setMilliseconds(0);
-    return dt.getTime();
-}
 
 function oneWeekPrior(time){
     const MS_PER_WEEK = 168 * 60 * 60 * 1000;

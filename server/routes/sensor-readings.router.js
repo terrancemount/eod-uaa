@@ -16,10 +16,9 @@ const routes = () => {
       sr_id as "id",
       sr_bdg_id as "building_id",
       sr_dt as "date_time",
-      sr_ele_dem as "electrical_demand",
-      sr_ele_use as "electrical_usage",
-      sr_ngs_use as "natural_gas_usage",
-      sr_ots_tmp as "outside_temperature"
+      sr_ele_use as "electrical",
+      sr_ngs_use as "natural_gas",
+      sr_ots_tmp as "temperature"
     from sensor_reading_tb;`;
 
     executeQuery(query, res, (rows)=>{
@@ -27,15 +26,17 @@ const routes = () => {
     });
   });
 
+  //put back in verifyUser
+
   //post to the sensor reading table
-  router.post('/', verifyUser, (req, res) => {
+  router.post('/', (req, res) => {
+    console.log(req.params);
 
     //assumes date_time is in unix time.  Might need to create middleware to ensure this.
     const query = `
     insert into sensor_reading_tb (
       sr_bdg_id,
       sr_dt,
-      sr_ele_dem,
       sr_ele_use,
       sr_ngs_use,
       sr_ots_tmp)
@@ -62,10 +63,9 @@ const routes = () => {
       sr_id as "id",
       sr_bdg_id as "building_id",
       sr_dt as "date_time",
-      sr_ele_dem as "electrical_demand",
-      sr_ele_use as "electrical_usage",
-      sr_ngs_use as "natural_gas_usage",
-      sr_ots_tmp as "outside_temperature"
+      sr_ele_use as "electrical",
+      sr_ngs_use as "natural_gas",
+      sr_ots_tmp as "temperature"
     from sensor_reading_tb
     where sr_id = ${req.params.id};
     `;
