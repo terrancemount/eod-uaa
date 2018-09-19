@@ -2,8 +2,10 @@ require('dotenv').config({path: __dirname + '/.env'})
 const parseDirectory = require('./parse-directory');
 const sendToDatabase = require('./send-to-database');
 const sendToLocal = require('./send-to-local');
-
-console.log(process.env.ENV);
+const readLocal = require('./read-local');
+const path = require('path');
+const fullFileName = path.join(__dirname, `localstore.json`);
+const deleteFile = require('./delete-file');
 
 /**
  * Setup an interval to call parseLoop every minute. Look at parseLoop for explanation.
@@ -29,6 +31,20 @@ parseLoop();
  * through all the directories listed in parser.json.
  */
 function parseLoop(){
+  //track if the local storage is bing used
+  let deleteLocal = true;
+  //proccess local storage
+  readLocal((err, data) => {
+    if(!err){
+      sendToDatabase(data, (err) => {
+        if(err){
+          deleteLocal = false;
+        }
+      });
+    }
+  });
+
+  //parse directory
   parseDirectory((err, data) => {
     if(err){
       handelError(err);
@@ -36,6 +52,8 @@ function parseLoop(){
       //try to store to database
       sendToDatabase(data, (err, res) => {
         if(err){
+          console.log("error with send to database");
+          deleteLocal = false;
           handelError(err);
           sendToLocal(data, (err) => {
             if(err){
@@ -48,6 +66,9 @@ function parseLoop(){
       });
     }
   });
+  if(deleteLocal){
+    deleteFile(fullFileName, ()=>{});
+  }
 }
 
 /**
