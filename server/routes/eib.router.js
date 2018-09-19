@@ -1,5 +1,5 @@
 const express = require('express');
-const executeQuery = require('../db');
+const executeQuery = require('../database/execute-query');
 const cleantime = require('../../shared/cleanTime');
 
 /**

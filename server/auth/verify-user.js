@@ -1,5 +1,5 @@
 //var bcrypt = require('bcryptjs');
-const  executeQuery = require('../db');
+const  executeQuery = require('../database/execute-query');
 
 function verifyAdmin(req, res, next){
   if(!req.body.username || !req.body.password){

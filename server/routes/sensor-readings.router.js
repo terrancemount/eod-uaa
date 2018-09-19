@@ -3,8 +3,9 @@
  */
 
 const express = require('express');
-const executeQuery = require('../db');
+const executeQuery = require('../database/execute-query');
 const verifyUser = require('../auth/verify-user');
+const convertBuildingCode = require('../database/convert-building-code');
 
 const routes = () => {
   const router = express.Router();
@@ -28,9 +29,9 @@ const routes = () => {
 
   //put back in verifyUser
 
+
   //post to the sensor reading table
-  router.post('/', (req, res) => {
-    console.log(req.params);
+  router.post('/', [convertBuildingCode], (req, res) => {
 
     //assumes date_time is in unix time.  Might need to create middleware to ensure this.
     const query = `
@@ -41,15 +42,14 @@ const routes = () => {
       sr_ngs_use,
       sr_ots_tmp)
     values (
-      ${req.body.building_id},
-      from_unixtime(${req.body.date_time / 1000}),
-      ${req.body.electrical_demand},
-      ${req.body.electrical_usage},
-      ${req.body.natural_gas_usage},
-      ${req.body.outside_temperature}
-    );`;
-
-
+      ${req.body.buildingid},
+      from_unixtime(${req.body.datetime / 1000}),
+      ${req.body.electrical},
+      ${req.body.naturalgas},
+      ${req.body.temperature});
+    `;
+    console.log(req.body.datetime);
+    console.log(query);
     executeQuery(query, res, (rows)=>{
       res.status(200).json({id: rows.insertId});
     });
