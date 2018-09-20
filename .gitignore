@@ -8,6 +8,9 @@
 #enviromentsl vars
 .env
 
+#generated local store
+localstore.json
+
 # dependencies
 /node_modules
 

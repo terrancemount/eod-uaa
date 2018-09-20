@@ -2,52 +2,77 @@ const fs = require('fs');
 const path = require('path');
 const parseCsv = require('./parse-csv');
 const parseXlsx = require('./parse-excel');
-const { paths } = require('./parser.json');
+const parserConfig = require('./parser-config');
+const assert = require('assert');
+const VError = require('verror');
 
 /**
- * Proccess all the files from the parser.json config array.
- * @param {function} callback with a (error, data) parameters.
+ * Proccess all the files from the listed in the package.json file retrieved with the parserConfig.getLookupDirName(). Will bundle up all the json in one array.
+ * @param {function(err, json[])} callback will be invoked as callback(null, json[]) on success. Will invoke callback(err) with VError wrapped error on failure.
+ *
+ * Will callback with errors:
+ *
+ *  readdir error   If readdir can't read the directory, callback for that directory will be invoked.
  */
-module.exports = function (callback){
-  paths.forEach(dir => {
-    readDirectory(dir, (err, data) => {
-      if(err) {
-        readDirectory(path.join(__dirname, dir), callback);
+module.exports = function (callback) {
+  assert.equal(typeof (callback), 'function', 'callback must be a function.');
+
+  parserConfig.getLookupDirName().forEach(dir => {
+    let output = [];
+    //read all files in dir
+    fs.readdir(path.join(__dirname, dir), (err, filenames) => {
+      if (err) {
+        callback(new VError(err, 'parse-directory.js, fs.readdir error: '));
       } else {
-        callback(null, data);
+        
+        let size = filenames.length;
+        //loop over array of filenames
+        filenames.forEach(filename => {
+
+          let extention = path.extname(filename);
+
+          //select which parser to user for which extention.
+          if (extention === '.xlsx') {
+            parseXlsx(path.join(__dirname, dir, filename), (err, json) => {
+              if (err) {
+                size--; //reduce the size needed because of error.
+                callback(new VError(err, 'parse-directory.js, parserXlsx: '));
+              } else {
+
+                output.push(json);
+
+                //check if all the filenames have ether errored out or been pushed on the json.
+                if (output.length >= size) {
+                  callback(null, output);
+                }
+              }
+            });
+          } else if (extention === '.csv') {
+            parseCsv(path.join(__dirname, dir, filename), (err, json) => {
+              if (err) {
+                size--; //reduce the size needed because of error.
+                callback(new VError(err, 'parse-directory.js, parseCsv: '));
+              } else {
+
+                output.push(json);
+
+                //check if all the filenames have ether errored out or been pushed on the json.
+                if (output.length >= size) {
+                  callback(null, output);
+                }
+              }
+            });
+          } else {
+            size--; //reduce the size needed because of error.
+            callback(new VError(err, 'parse-directory.js, extension not supported: '));
+
+            //check if all the filenames have ether errored out or been pushed on the json.
+            if (size && output.length >= size) {
+              callback(null, output);
+            }
+          }
+        });
       }
     });
-  });
+  })
 }
-
-/********************************************************************************
- * Private functions of module
- * ******************************************************************************/
-/**
- * Reads all the files from the directory and procceses the .csv and .xlsx
- * @param {String} dirname that is wanting to be read from.
- * @param {function} callback call back with a (error, data) parameters
- */
-function readDirectory(dirname, callback){
-  fs.readdir(dirname, (err, filenames) => {
-    if(err){
-      callback(err, null);
-    } else {
-      filenames.forEach(filename => {
-
-        let extention = path.extname(filename);
-
-        if(extention === '.xlsx'){
-          parseXlsx(path.join(dirname, filename), callback);
-        } else if(extention === '.csv'){
-          parseCsv(path.join(dirname, filename), callback);
-        } else {
-          callback(extention + " is an unsupported file extention.", null);
-        }
-      });
-    }
-  });
-}
-
-
-

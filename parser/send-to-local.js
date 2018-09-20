@@ -1,52 +1,50 @@
 const fs = require('fs');
 const path = require('path');
-const fullFileName = path.join(__dirname, `localstore.json`);
+const assert = require('assert');
+const VError = require('verror');
+
 
 /**
  * Store json data locally.
+ * @param {string}
  * @param {JSON} data to store in local storage at localstore.json
- * @param {function} callback (err) parameter.
+ * @param {function} callback Upon success, callback(null). Upon failure, callback(err).
  */
-module.exports = function (data, callback){
+module.exports = function (fullFileName ,data, callback) {
+  assert.equal(typeof (callback), 'function', 'callback must be a function.');
+  assert.ok(Array.isArray(data), 'send-to-local: data must be an array');
+
   //try to read the file
-  fs.readFile(fullFileName, 'utf8', (err, fileData)=>{
-    if(err){
-      if (err.code === 'ENOENT'){
-        writeNewFile(data, callback);
-      } else {
-        callback("Error: while trying to open localstore.json, " + err);
-      }
+  fs.readFile(fullFileName, 'utf8', (err, fileData) => {
+    if (err) {
+      //write a new file
+      const obj = {table: data};
+      fs.writeFile(fullFileName, JSON.stringify(obj), 'utf8', err => {
+        if (err) {
+          callback(new VError(err, "send-to-local: Unable to write new file"))
+        } else {
+          callback(null);
+        }
+      });
     } else {
-      appendFile(fileData, data, callback);
+      //append to file
+      console.log('append: ', data);
+      try {
+        obj = JSON.parse(fileData);
+      } catch (e) {
+        throw new VError(e, 'send-to-local: JSON.parse Error');
+      }
+      obj.table.push(...data);
+      json = JSON.stringify(obj);
+      fs.writeFile(fullFileName, json, 'utf8', err => {
+        if(err){
+          callback(new VError(err, "send-to-local: Unable to append json to file."))
+        }else {
+          callback(null);
+        }
+
+      });
     }
   });
-}
-
-/********************************************************************************
- * Private functions of module
- * ******************************************************************************/
-
-/**
- * Write a new file to the file system.
- * @param {JSON} data to be stored locally
- * @param {*} callback (err) for any error returned from fs.
- */
-function writeNewFile(data, callback){
-  let obj = { table: [] };
-  obj.table.push(data);
-  fs.writeFile(fullFileName, JSON.stringify(obj), 'utf8', callback);
-}
-
-/**
- * Append json to a file.
- * @param {object} fileData from a fs.readFile call.
- * @param {JSON} appendData data to store on the local storage.
- * @param {function} callback (err) for any errors returned from fs.
- */
-function appendFile(fileData, appendData, callback){
-  obj = JSON.parse(fileData);
-  obj.table.push(appendData);
-  json = JSON.stringify(obj);
-  fs.writeFile(path.join(__dirname, 'localstore.json'), json, 'utf8', callback);
 }
 

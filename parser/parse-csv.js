@@ -1,17 +1,27 @@
 const fs = require('fs');
-const { sensor_lut } = require('./parser.json');
-const cleanTime = require('../shared/cleanTime');
+const { sensorlut } = require('../package.json');
 const csv = require('csv-parser');
-const deleteFile = require('./delete-file');
+const assert = require('assert');
+const VError = require('verror');
+const parserConfig = require('./parser-config');
 
 
 /**
- * Proccess the csv file to json data.
+ * Open file and proccess out the csv information and callback with JSON data. File will be deleted before callback is invoked.
  * @param {String} fullFilename path to the file.
- * @param {function} callback for the data exported to json.
+ * @param {function(err, data)} callback for the data exported to json.
+ *
+ * Many ways for this to throw and error.
+ *
+ *  Unlink error: will callback(err) with a wrapped Error for the fs.unlink().
+ *
+ *  fileNotFound: will callback(err) wrapped Error for fs.readFileStream().
  */
 module.exports = function (fullFileName, callback) {
-  let output = {
+  assert.equal(typeof (fullFileName), 'string', 'fullFileName must be a string.');
+  assert.equal(typeof (callback), 'function', 'callback must be a function.');
+
+  let json = {
     buildingcode: null,
     datetime: Math.trunc(Date.now() / 1000 / 60) * 60 * 1000 //round to nearest minute.
     //datetime: cleanTime(Date.now())
@@ -21,47 +31,29 @@ module.exports = function (fullFileName, callback) {
   .pipe(csv({headers: ['name', 'x', 'x', 'x', 'value', 'x', 'x']}))
   .on('data', (data) => {
 
-    if(!output.buildingcode){
-      output.buildingcode = data.name.split('.',1)[0];
+    //check to see if building code was set.
+    if(!json.buildingcode){
+      json.buildingcode = data.name.split('.',1)[0]; //cell A1 needs to contain the building code
     }
 
-    const index = findLookupIndex(data.name)
-    if(index > -1 ){
-      let number = Number.parseFloat(data.value);
+    const number = Number.parseFloat(data.value);
+    const name = parserConfig.getSensorName(data.name);
 
-      if(number !== NaN && number > 0){
-        output[sensor_lut[index].senor_name] =  number;
-      }
+    if(name && number !== NaN && number > 0){
+      json[name] =  number;
     }
+
   })
   .on('end', ()=>{
-    //delete the file
-    deleteFile(fullFileName, (err)=> {
-      if(err){
-        console.log(err);
+    //try to delete file.
+    fs.unlink(fullFileName, (err) => {
+      if(!err){
+        //file deleted
+        callback(null, json);
       }
-    });
-    callback(null, output);
+    })
   })
   .on('error', (err) => {
-    callback({code: err.code, message: "Error on createReadStream in parse-file.js. "}, null);
+    callback(new VError(err, 'parse-csv: "%s"', fullFileName));
   });
 }
-
-/********************************************************************************
- * Private functions of module
- * ******************************************************************************/
-
-/**
- * Find index in the lookup table for the given name.
- * @param {String} name of the sensor in file
- * @returns {number} index for the given name.
- */
-function findLookupIndex(name){
-  name = name.split('.');
-  name.splice(0, 1);
-  name = name.join('.');
-
-  return sensor_lut.findIndex((s) => s.siemien_name === name);
-}
-
