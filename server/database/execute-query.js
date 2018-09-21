@@ -26,18 +26,11 @@ function executeQuery(query, res, success) {
 		}
 		connection.query(query, function (err, rows) {
       connection.release();
-
       if (err) {
         return res.status(500).send("Error while quering the database.");
       }
-
       success(rows);
-		});
-		connection.on('error', function (err) {
-      return res.status(500).send("Error from mysql connection pool.");
 		});
 	});
 }
-
-
 module.exports = executeQuery;

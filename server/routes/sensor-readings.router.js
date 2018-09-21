@@ -27,11 +27,9 @@ const routes = () => {
     });
   });
 
-  //put back in verifyUser
-
 
   //post to the sensor reading table
-  router.post('/', [convertBuildingCode], (req, res) => {
+  router.post('/', [verifyUser, convertBuildingCode], (req, res) => {
 
     //assumes date_time is in unix time.  Might need to create middleware to ensure this.
     const query = `
@@ -48,8 +46,7 @@ const routes = () => {
       ${req.body.naturalgas},
       ${req.body.temperature});
     `;
-    console.log(req.body.datetime);
-    console.log(query);
+
     executeQuery(query, res, (rows)=>{
       res.status(200).json({id: rows.insertId});
     });

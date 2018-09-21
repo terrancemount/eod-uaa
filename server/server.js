@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
+const app = express();
+
 const eibRouter = require('./routes/eib.router');
 const sensorReadingRouter = require('./routes/sensor-readings.router');
-const path = require('path');
+const chartDataRouter = require('./routes/chart-data.router');
 
-const app = express();
 const port = process.env.PORT || 3000;
 
 
@@ -21,6 +23,8 @@ app.use(function (req, res, next) {
 
 //load the router for eib
 app.use('/api/eib', eibRouter());
+
+app.use('/api/chart-data', chartDataRouter());
 
 app.use('/api/sensor-readings', sensorReadingRouter());
 

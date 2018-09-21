@@ -13,6 +13,8 @@ export class SensorService {
   numOfTicks = 7 * 24 * 4;
   $queryTimer;
   waitTime = 5; //seconds
+  buildingId = 4;
+
   constructor(private http: HttpClient) { }
 
 
@@ -22,31 +24,35 @@ export class SensorService {
   startQueryTimer() {
     this.$queryTimer = setInterval(() => {
 
-      //todo: create a real data retrival system
-      //this.sensorReadings[0].push(new Date());
-      this.sensorReadings[1].push(Math.random() * 10 + 50);
-      this.sensorReadings[2].push(Math.random() * 100 + 1000);
-      this.sensorReadings[3].push(Math.random() * 10 + 60);
+    const ticks = this.calcTicksNeeded();
 
-      //this.sensorReadings[0].splice(0,1);
-      this.sensorReadings[1].splice(0,1);
-      this.sensorReadings[2].splice(0,1);
-      this.sensorReadings[3].splice(0,1);
+    console.log(ticks);
 
-    }, 1000);
+    if(ticks > 0){
+      this.requestSensorReadingsFromServer(this.buildingId, ticks, (err, data)=>{
+        if(!err){
+          for(let i = 0; i < data.length;  i++){
+            this.sensorReadings[i].push(...data[i]);
+            this.sensorReadings[i].splice(0, data[i].length);
+          }
+        }
+      })
+    }
+
+    }, 30000);
   }
 
   /**
    * Get the sensor reading array from the service once the service has retrieved it from the server.
    * @param callback for when the request is complete or gives an error after wait time in seconds
    */
-  getSensorReadingArray(callback) {
-    if (!this.sensorReadings.length) { //if noting in sensorReadings then
+  getSensorReadingArray(buildingId:number ,callback) {
+    if (buildingId != this.buildingId || !this.sensorReadings.length) { //if noting in sensorReadings then
+      this.buildingId = buildingId;
 
-      let time = cleanTime(Date.now());
       let ticks = this.numOfTicks;
 
-      this.requestSensorReadingsFromServer(time, ticks, (err, data) => {
+      this.requestSensorReadingsFromServer(buildingId, ticks, (err, data) => {
         if (err) {
           callback(err, null);
         } else {
@@ -67,24 +73,17 @@ export class SensorService {
    * Get the sensor readings from the server to store in SensorService
    * @param callback is the callback used when the observable has returned data from server.
    */
-  private requestSensorReadingsFromServer(time, ticks, callback) {
-    let results;
-    let params = new HttpParams()
-      .set('time', time.toString())
-      .set('ticks', ticks.toString());
+  private requestSensorReadingsFromServer(buildingId, ticks, callback) {
+
 
     //get observable from http module
-    this.http.get(environment.serverURL + `/api/eib`, { params: params }).pipe(
+    this.http.get(environment.serverURL + `/api/chart-data/building/${buildingId}/ticks/${ticks}`).pipe(
       //tap(data => console.log(JSON.stringify(data))),
       catchError(this.handleError)
     )
     .subscribe(
-      data => {
-        results = <any>data;
-      },
-      //todo: make error logger
-      error => callback({ message: `Error with requesting sensor readings ${error}` }, null),
-      () => { callback(null, results); }
+      data => callback(null, <any>data),
+      error => callback({ message: `Error with requesting sensor readings ${error}` }, null)
     );
   }
   /**
@@ -104,20 +103,17 @@ export class SensorService {
   /**
    * calculate number of ticks needed to make one week of 15 minute ticks
    */
-  private calcTicksNeeded(comptime) {
+  private calcTicksNeeded() {
     if (!this.sensorReadings.length) { //if sensor readings has not been initalized is length === 0
       return this.numOfTicks;
     }
 
-    let lastTime = this.sensorReadings[0][this.sensorReadings[0].length - 1];
+    const currentTime = Date.now();
+    const lastTime = this.sensorReadings[0][this.sensorReadings[0].length - 1];
+    const ticks = Math.trunc((currentTime - lastTime) / 60 /1000);
 
-    //check for error.  current time should never be greater then last time
-    if (comptime < lastTime) {
-      //todo: make error log here.
-      return 0;
-    }
 
-    let tickDiff = (comptime - lastTime) / (1000 * 60 * 15);
-    return Math.min(Math.trunc(tickDiff), this.numOfTicks); //max number of ticks allowed is in numberOfTicks var
+    return Math.min(ticks, this.numOfTicks); //max number of ticks allowed is in numberOfTicks var
   }
 }
+

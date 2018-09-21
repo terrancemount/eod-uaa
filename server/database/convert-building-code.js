@@ -12,7 +12,7 @@ module.exports = function convertBuildingCode(req, res, next) {
   if(!req.body.buildingcode) {
     req.body['buildingcode'] = 1;
   }
-
+  
   const query = `
     select bld_id as id
     from building_tb

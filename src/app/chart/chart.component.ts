@@ -17,8 +17,9 @@ export class ChartComponent implements OnInit, DoCheck{
 
 
   @Input() showElectrical:boolean = true;
-  @Input() showNaturalGas:boolean = true;
+  @Input() showNaturalGas:boolean = false;
   @Input() showOutsideTemp:boolean = true;
+  @Input() buildingId:number = 4;
 
   constructor(private sensorService:SensorService) {
   }
@@ -30,7 +31,7 @@ export class ChartComponent implements OnInit, DoCheck{
   ngOnInit() {
     this.chart = new Chart('canvas', this.getConfig());
 
-    this.sensorService.getSensorReadingArray((err, data) => {
+    this.sensorService.getSensorReadingArray(this.buildingId, (err, data) => {
       if(err) {
         console.log('Error when trying to get sensor data');
       } else {

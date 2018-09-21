@@ -10,7 +10,7 @@ function verifyAdmin(req, res, next){
     select ur_id
     from user_tb
     where ur_username = '${req.body.username}'
-    and ur_password = '${req.body.password};
+    and ur_password = '${req.body.password}';
   `;
 
   executeQuery(query, res, (rows)=>{
