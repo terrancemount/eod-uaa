@@ -19,7 +19,7 @@ export class ChartComponent implements OnInit, DoCheck{
   @Input() showElectrical:boolean = true;
   @Input() showNaturalGas:boolean = false;
   @Input() showOutsideTemp:boolean = true;
-  @Input() buildingId:number = 4;
+  @Input() buildingId:number = 1;
 
   constructor(private sensorService:SensorService) {
   }
