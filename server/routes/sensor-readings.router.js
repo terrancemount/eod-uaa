@@ -34,14 +34,14 @@ const routes = () => {
     //assumes date_time is in unix time.  Might need to create middleware to ensure this.
     const query = `
     insert into sensor_readings (
-      createddate
+      createddate,
       buildingid,
       electrical,
       naturalgas,
       water,
       temperature)
     values (
-      ${req.body['createddate']} ,
+      ${req.body['createddate']},
       ${req.body['buildingid']},
       ${req.body['electrical']},
       ${req.body['naturalgas']},
