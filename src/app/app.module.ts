@@ -7,13 +7,15 @@ import { SlideshowComponent } from './slideshow/slideshow.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChartComponent } from './chart/chart.component';
 import { SensorService } from './services/sensor.service';
+import { SensorButtonsComponent } from './sensor-buttons/sensor-buttons.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SlideshowComponent,
     DashboardComponent,
-    ChartComponent
+    ChartComponent,
+    SensorButtonsComponent
   ],
   imports: [
     BrowserModule,

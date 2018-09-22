@@ -33,18 +33,20 @@ const routes = () => {
 
     //assumes date_time is in unix time.  Might need to create middleware to ensure this.
     const query = `
-    insert into sensor_reading_tb (
-      sr_bdg_id,
-      sr_dt,
-      sr_ele_use,
-      sr_ngs_use,
-      sr_ots_tmp)
+    insert into sensor_readings (
+      createddate
+      buildingid,
+      electrical,
+      naturalgas,
+      water,
+      temperature)
     values (
-      ${req.body.buildingid},
-      from_unixtime(${req.body.datetime / 1000}),
-      ${req.body.electrical},
-      ${req.body.naturalgas},
-      ${req.body.temperature});
+      ${req.body['createddate']} ,
+      ${req.body['buildingid']},
+      ${req.body['electrical']},
+      ${req.body['naturalgas']},
+      ${req.body['water']},
+      ${req.body['temperature']});
     `;
 
     executeQuery(query, res, (rows)=>{

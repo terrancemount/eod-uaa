@@ -10,7 +10,7 @@ const executeQuery = require('./execute-query');
 module.exports = function convertBuildingCode(req, res, next) {
   //building code is not set then set it to the testing building code of 1
   if(!req.body.buildingcode) {
-    req.body['buildingcode'] = 1;
+    res.status(500).send('buildingcode was not sent');
   }
   
   const query = `
@@ -24,27 +24,7 @@ module.exports = function convertBuildingCode(req, res, next) {
 
       next();
     } else {
-      addBuildingCode(req, res, next);
+      res.status(500).send('Invalid building code');
     }
   });
-}
-
-function addBuildingCode(req, res, next){
-  const query = `
-    insert into building_tb (
-      bld_name,
-      bld_code,
-      bld_abbr,
-      college_code)
-    values (
-      '${req.body.buildingcode}',
-      '${req.body.buildingcode}',
-      '${req.body.buildingcode}',
-      'UAA'
-    );`;
-
-    executeQuery(query, res, () => {
-      convertBuildingCode(req, res, next);
-    });
-
 }
