@@ -7,14 +7,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  showElectrical:boolean = true;
-  showNaturalGas:boolean = true;
-  showOutsideTemp:boolean = true;
-  buildingId:number = 31;
+  buildingid:number = 0;
 
 
   constructor(private route: ActivatedRoute) {
-    this.buildingId = +this.route.snapshot.paramMap.get('id');
+    this.buildingid = +this.route.snapshot.paramMap.get('id');
   }
 
   ngOnInit() {

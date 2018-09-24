@@ -11,6 +11,10 @@ import { SensorButtonsComponent } from './sensor-buttons/sensor-buttons.componen
 import { TimeBarComponent } from './time-bar/time-bar.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
+import { ChartDataService } from './services/chart-data.service';
+import { ChartDatasetService } from './services/chart-dataset.service';
+import { ChartYaxesService } from './services/chart-yaxes.service';
+import { ChartConfigService } from './services/chart-config.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,13 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [SensorService],
+  providers: [
+    SensorService,
+    ChartDataService,
+    ChartDatasetService,
+    ChartYaxesService,
+    ChartConfigService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
