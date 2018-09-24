@@ -10,14 +10,13 @@ export class DashboardComponent implements OnInit {
   showElectrical:boolean = true;
   showNaturalGas:boolean = true;
   showOutsideTemp:boolean = true;
-  buildingId:number = 1;
+  buildingId:number = 31;
 
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {
+    this.buildingId = +this.route.snapshot.paramMap.get('id');
+  }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.buildingId = params['id'];
-    })
   }
 }

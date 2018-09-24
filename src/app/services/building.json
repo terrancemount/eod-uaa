@@ -1,0 +1,14 @@
+{
+  "buildings": [
+    {
+      "id": 31,
+      "name": "Engineering and Industry Building",
+      "buildingcode": "eib"
+    },
+    {
+      "id": 41,
+      "name": "AMB Building",
+      "buildingcode": "amb"
+    }
+  ]
+}

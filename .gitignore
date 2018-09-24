@@ -7,6 +7,7 @@
 
 #enviromentsl vars
 .env
+gulpfile.js
 
 #generated local store
 localstore.json

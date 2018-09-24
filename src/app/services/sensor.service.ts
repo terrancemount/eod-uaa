@@ -24,29 +24,47 @@ export class SensorService {
   startQueryTimer() {
     this.$queryTimer = setInterval(() => {
 
-    const ticks = this.calcTicksNeeded();
+      const ticks = this.calcTicksNeeded();
 
-    console.log(ticks);
+      console.log(ticks);
 
-    if(ticks > 0){
-      this.requestSensorReadingsFromServer(this.buildingId, ticks, (err, data)=>{
-        if(!err){
-          for(let i = 0; i < data.length;  i++){
-            this.sensorReadings[i].push(...data[i]);
-            this.sensorReadings[i].splice(0, data[i].length);
+      if (ticks > 0) {
+        this.requestSensorReadingsFromServer(this.buildingId, ticks, (err, data) => {
+          if (!err) {
+            for (let i = 0; i < data.length; i++) {
+              this.sensorReadings[i].push(...data[i]);
+              this.sensorReadings[i].splice(0, data[i].length);
+            }
           }
-        }
-      })
-    }
-
+        })
+      }
     }, 30000);
   }
+
+
+  //callback(err, sensorData, chartConfig)
+
+
+  getChartComponets(buildingId, callback){
+
+
+
+
+  }
+
+  getSensorDataObservable(buildingId, ticks){
+
+  }
+  getChartConfigObservable(buildingId){
+
+  }
+
 
   /**
    * Get the sensor reading array from the service once the service has retrieved it from the server.
    * @param callback for when the request is complete or gives an error after wait time in seconds
    */
-  getSensorReadingArray(buildingId:number ,callback) {
+  getSensorReadingArray(buildingId: number, callback) {
     if (buildingId != this.buildingId || !this.sensorReadings.length) { //if noting in sensorReadings then
       this.buildingId = buildingId;
 
@@ -68,6 +86,21 @@ export class SensorService {
     }
   }
 
+  /**
+   * Get the outside temperature for a building.
+   * @param {number} buildingid for the buidings outside temperature to retrieve.
+   */
+  getCurrentTemperature(buildingid: number): number {
+    //todo: make this relevant for a building other then EIB.
+
+    //check if the sensor readings table has been set
+    if (this.sensorReadings.length) {
+
+    }
+    //return a default value of 50 if the sensor readings has not been set.
+    return 50;
+  }
+
 
   /**
    * Get the sensor readings from the server to store in SensorService
@@ -81,10 +114,10 @@ export class SensorService {
       //tap(data => console.log(JSON.stringify(data))),
       catchError(this.handleError)
     )
-    .subscribe(
-      data => callback(null, <any>data),
-      error => callback({ message: `Error with requesting sensor readings ${error}` }, null)
-    );
+      .subscribe(
+        data => callback(null, <any>data),
+        error => callback({ message: `Error with requesting sensor readings ${error}` }, null)
+      );
   }
   /**
    * Handle Observable errors.  Todo: need to make a logging report
@@ -110,7 +143,7 @@ export class SensorService {
 
     const currentTime = Date.now();
     const lastTime = this.sensorReadings[0][this.sensorReadings[0].length - 1];
-    const ticks = Math.trunc((currentTime - lastTime) / 60 /1000);
+    const ticks = Math.trunc((currentTime - lastTime) / 60 / 1000);
 
 
     return Math.min(ticks, this.numOfTicks); //max number of ticks allowed is in numberOfTicks var
