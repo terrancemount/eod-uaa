@@ -1,3 +1,14 @@
-<div class="container">
-  <span class="text-muted">Place sticky footer content here.</span>
-</div>
+<nav class='navbar fixed-bottom justify-content-between z-index-4'>
+  <div class='container-fluid'>
+        <span class='col display-2'>
+          {{now | date:'shortTime'}}
+        </span>
+
+        <span>
+          <span *ngIf='temperature' class='display-6'>outside temperature</span>
+          <span class='col display-2'>
+            {{temperature}}
+          </span>
+        </span>
+  </div>
+</nav>

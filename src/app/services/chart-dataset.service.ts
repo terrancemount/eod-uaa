@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { first } from "rxjs/operators";
+import { Observable, timer } from "rxjs";
+import { first, retryWhen, delayWhen, map, retry } from "rxjs/operators";
 
 
 @Injectable()
@@ -26,6 +26,15 @@ export class ChartDatasetService {
       fill: true,
       yAxisID: 2
     }, {
+      id: 4,
+      sensorcode: 'water_usage',
+      label: 'Water Usage',
+      borderColor: 'rgb(65,105,225)',
+      backgroundColor: 'rgba(65,105,225, .5)',
+      hidden: true,
+      fill: true,
+      yAxisID: 4
+    }, {
       id: 3,
       sensorcode: 'temperature',
       label: 'Outside Temperature',
@@ -38,7 +47,7 @@ export class ChartDatasetService {
   }, {
     buildingid: 41,
     datasets: [{
-      id: 4,
+      id: 5,
       sensorcode: 'electrical_demand',
       label: 'Electricty Demand',
       borderColor: 'rgb(255, 205, 86)',
@@ -47,7 +56,7 @@ export class ChartDatasetService {
       hidden: false,
       yAxisID: 1
     }, {
-      id:5,
+      id: 6,
       sensorcode: 'naturalgas_demand',
       label: 'Natural Gas Demand',
       borderColor: 'rgb(255, 99, 132)',
@@ -56,7 +65,7 @@ export class ChartDatasetService {
       fill: true,
       yAxisID: 2
     }, {
-      id: 6,
+      id: 7,
       sensorcode: 'temperature',
       label: 'Outside Temperature',
       borderColor: 'rgb(201, 203, 207)',
@@ -76,7 +85,7 @@ export class ChartDatasetService {
    */
   getChartDataset(buildingid: number): Observable<any> {
     return new Observable(obs => {
-      const data = this.chartDataset.find(d => d.buildingid === buildingid);
+      const data = this.chartDataset.find(d => +d.buildingid === buildingid);
 
       if (data) {
         obs.next(data);
@@ -89,18 +98,49 @@ export class ChartDatasetService {
   }
 
   /**
+   * Gets the dataset array for the buttons.  This function will
+   * retry two times with a two second each time on a failure.
+   * If it fails three times then it will send out an error.
+   * @param building
+   */
+  getButtonData(buildingid: number): Observable<any> {
+    return new Observable(obs => {
+
+      //look for the data on the server.
+      obs.next(this.chartDataset.find(d => +d.buildingid === buildingid));
+
+    }).pipe(
+      map(data => {
+        if(!data){
+          //throw and error if data is null or undefined
+          throw 'ChartDatasetService Error: failed three times to get the ButtonData for buildingid = ' + buildingid;
+        }
+        //else return the data.
+        return data;
+      }),
+      retryWhen(errors =>
+        errors.pipe(
+          delayWhen(() => timer(2000))
+        )
+      ),
+      retry(2),
+      first()
+
+    );
+  }
+  /**
    * Sets the visablity for the given datasetid.
    * @param {number} datasetid a number representing the id for the dataset.
    * @param {boolean} visablity a boolean for turning on or off the visablity of the dataset.
    */
-  setDatasetVisablity(datasetid: number, visablity: boolean):boolean{
+  setDatasetVisablity(datasetid: number, visablity: boolean): boolean {
     let dataset;
     let index = 0;
-    while(!dataset && index < this.chartDataset.length){
+    while (!dataset && index < this.chartDataset.length) {
       dataset = this.chartDataset[index].datasets.find(d => d.id === datasetid);
     }
 
-    if(dataset){
+    if (dataset) {
       dataset.hidden = visablity;
       return true; //found and set successfully
     }

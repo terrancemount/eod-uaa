@@ -17,10 +17,10 @@ export class ChartYaxesService {
     }, {
       id: 2,
       position: 'left',
-      display: false,
+      display: true,
       scaleLabel: {
-        display: false,
-        labelString: 'Natural Gas Demand (CCT)'
+        display: true,
+        labelString: 'Natural Gas Demand (CCT / hour)'
       }
     }, {
       id: 3,
@@ -30,11 +30,19 @@ export class ChartYaxesService {
         display: true,
         labelString: 'Outside Temperature (\xB0F)'
       }
+    },  {
+      id: 4,
+      position: 'left',
+      display: true,
+      scaleLabel: {
+        display: true,
+        labelString: 'Water Usage (Gallons)'
+      }
     }] //yAxes close
   }, {
     buildingid: 41,
     yAxes: [{
-      id: 4,
+      id: 5,
       position: 'left',
       display: true,
       scaleLabel: {
@@ -42,15 +50,15 @@ export class ChartYaxesService {
         labelString: 'Electrical Demand (KW)'
       }
     }, {
-      id: 5,
+      id: 6,
       position: 'left',
-      display: false,
+      display: true,
       scaleLabel: {
-        display: false,
+        display: true,
         labelString: 'Natural Gas Demand (CCT)'
       }
     }, {
-      id: 6,
+      id: 7,
       position: 'right',
       display: true,
       scaleLabel: {
@@ -62,7 +70,7 @@ export class ChartYaxesService {
 
   getChartYaxes(buildingid: number):Observable<any>{
     return new Observable(obs => {
-      const data = this.chartYaxes.find(d => d.buildingid === buildingid);
+      const data = this.chartYaxes.find(d => +d.buildingid=== buildingid);
 
       if(data){
         obs.next(data);

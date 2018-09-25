@@ -1,12 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 import { AppComponent } from './app.component';
 import { SlideshowComponent } from './slideshow/slideshow.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChartComponent } from './chart/chart.component';
-import { SensorService } from './services/sensor.service';
 import { SensorButtonsComponent } from './sensor-buttons/sensor-buttons.component';
 import { TimeBarComponent } from './time-bar/time-bar.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -15,6 +15,7 @@ import { ChartDataService } from './services/chart-data.service';
 import { ChartDatasetService } from './services/chart-dataset.service';
 import { ChartYaxesService } from './services/chart-yaxes.service';
 import { ChartConfigService } from './services/chart-config.service';
+import { BuildingService } from './services/building.service';
 
 @NgModule({
   declarations: [
@@ -29,14 +30,15 @@ import { ChartConfigService } from './services/chart-config.service';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AngularResizedEventModule
   ],
   providers: [
-    SensorService,
     ChartDataService,
     ChartDatasetService,
     ChartYaxesService,
-    ChartConfigService
+    ChartConfigService,
+    BuildingService
   ],
   bootstrap: [AppComponent]
 })

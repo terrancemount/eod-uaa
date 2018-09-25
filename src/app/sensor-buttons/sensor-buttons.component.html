@@ -1,5 +1,5 @@
-<div>
-  <button (click)='toggle("electrical")'>Electrical</button>
-  <button (click)='toggle("naturalgas")'>Natural Gas</button>
-  <button (click)='toggle("temperature")'>Temperature</button>
+<div *ngIf='buttonData' class='d-flex justify-content-center'>
+  <span *ngFor='let sensor of buttonData.datasets' class="pl-4 pr-4">
+    <button class='btn btn-primary' (click)='toggle(sensor)'>{{sensor.label}}</button>
+  </span>
 </div>

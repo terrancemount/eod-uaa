@@ -1,23 +1,26 @@
 import { Component, OnInit, Input, DoCheck } from '@angular/core';
 import { Chart } from '../../../node_modules/chart.js';
 import { ChartConfigService } from '../services/chart-config.service';
+import { BuildingService } from '../services/building.service';
+
 
 @Component({
   selector: 'app-chart',
-  template: `
-    <div>
-      <canvas id='canvas'>{{chart}}</canvas>
-    </div>
-  `
+  templateUrl: './chart.component.html',
+  styleUrls: ['./chart.component.scss']
 })
 export class ChartComponent implements OnInit, DoCheck {
   chart;
   config;
+  height;
+  width;
+  building;
+
 
   @Input() buildingid: number;
 
-  constructor(private chartConfigService: ChartConfigService) {
-  }
+  constructor(private chartConfigService: ChartConfigService, private buildingService: BuildingService) {}
+
 
   ngDoCheck() {
     if (this.chart)
@@ -25,11 +28,25 @@ export class ChartComponent implements OnInit, DoCheck {
   }
   ngOnInit() {
 
+    //gets the building object to pull the name out of.
+    this.buildingService.getBuilding(this.buildingid)
+    .subscribe(
+      data => this.building = data,
+      error => console.log(error)
+    )
+
     this.chartConfigService.getChartConfig(this.buildingid).subscribe(
       data => this.config = data,
       error => console.log(error),
       //() => console.log(this.config)
-      () => this.chart = new Chart('canvas', this.config)
+      () => {
+
+        console.log(this.config.data.datasets[3].data);
+        this.height = window.innerHeight * .70;
+        this.width = window.innerWidth * .90
+
+        this.chart = new Chart('canvas', this.config)
+      }
     );
   }
 }

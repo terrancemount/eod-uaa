@@ -27,7 +27,7 @@ export class ChartConfigService {
    */
   getChartConfig(buildingid: number): Observable<any> {
     return new Observable(obs => {
-      let config = this.chartConfig.find(d => d.buildingid === buildingid);
+      let config = this.chartConfig.find(d => +d.buildingid=== buildingid);
 
       if (config) {
         console.log("config = ", config);
@@ -81,6 +81,7 @@ export class ChartConfigService {
    */
   getConfigTemplate() {
     return {
+
       buildingid: -1,
       type: 'line',
       data: {
@@ -88,17 +89,25 @@ export class ChartConfigService {
         datasets: []
       },
       options: {
-        events: ['hover'],
+        maintainAspectRatio: false,
+        layout:{
+          padding:{
+            left: 50,
+            right: 50,
+            top: 20,
+            bottom: 20
+          }
+        },
+        events:['mouseover', 'mouseout', 'click'],
         lineHeight: 1,
         responsive: true,
         hover: {
           mode: 'nearest',
           intersect: true
         },
-        stacked: false,
         title: {
-          display: true,
-          text: 'Engineering and Industry Building Sensor Data'
+          display: false,
+          text: 'Default'
         },
         scales: {
           yAxes: [],

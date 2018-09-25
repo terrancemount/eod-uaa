@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, Input } from '@angular/core';
-import { EventEmitter } from 'events';
+import { Component, OnInit, Input } from '@angular/core';
+import { ChartDatasetService } from '../services/chart-dataset.service';
 
 @Component({
   selector: 'app-sensor-buttons',
@@ -7,20 +7,24 @@ import { EventEmitter } from 'events';
   styleUrls: ['./sensor-buttons.component.scss']
 })
 export class SensorButtonsComponent implements OnInit {
+  buttonData;
+  @Input() buildingid;
 
-  @Input() sensorConfig = [
-    {name: 'Electrical Useage', id: 1, hidden: false},
-    {name: 'Electrical Demand', id: 2,  hidden: false},
-    {name: 'Natural Gas Useage', id: 3, hidden: true},
-    {name: 'Natural Gas Useage', id: 4, hidden: true},
-    {name: 'Temperature', id: 3, hidden: false}]
-  constructor() { }
+  constructor(private chartDatasetService: ChartDatasetService) { }
 
   ngOnInit() {
+    console.log("getting the data");
+    this.chartDatasetService.getButtonData(this.buildingid)
+    .subscribe(
+      data =>{
+        this.buttonData = data;
+        console.log(data);
+      },
+      error => console.log(error)
+    )
   }
-
-  toggle(name){
-    
+  toggle(sensor){
+    sensor.hidden = !sensor.hidden;
   }
 }
 

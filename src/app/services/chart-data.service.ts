@@ -7,15 +7,16 @@ import { forEach } from "@angular/router/src/utils/collection";
 
 @Injectable()
 export class ChartDataService {
-  chartData =[];
+  chartData = [];
   maxTicks = 7 * 24 * 4;
+  temperature;
   //maxTicks = 10;
 
   constructor(private http: HttpClient) { }
 
   getChartData(buildingid: number) {
     return new Observable(obs => {
-      const data = this.chartData.find(d => d.buildingid === buildingid);
+      const data = this.chartData.find(d => +d.buildingid === buildingid);
 
       if (data) {
         obs.next(data);
@@ -31,10 +32,10 @@ export class ChartDataService {
             results => {
 
               //run through all the keys in the results object
-              for(let key in results){
+              for (let key in results) {
 
                 //if it has a sub key of usage then send it to the generate demand function.
-                if(results[key]['usage']){ //check if there is a useage.
+                if (results[key]['usage']) { //check if there is a useage.
                   results[key]['demand'] = []; //create a new array for demand
                   this.generateDemand(results[key].usage, results[key].demand, results['createddate']);
                 }
@@ -64,52 +65,40 @@ export class ChartDataService {
    * @param demand a calculated array to be altered by this function.
    * @param time an array of times from the server.
    */
-  generateDemand(usage:number[], demand:number[], time:number[]){
+  generateDemand(usage: number[], demand: number[], time: number[]) {
     let i = demand.length;
 
     //if demand has no length then push on a zero
-    if(!demand.length){
+    if (!demand.length) {
       demand.push(0);
     }
 
-    for(let i = demand.length; i < usage.length; i++){
-      let usageDiff = usage[i] - usage[i-1];
-      const timeDiff = (time[i] - time[i-1])/1000/60/60; //convert time difference to hours
-      demand.push(usageDiff/timeDiff);
+    for (let i = demand.length; i < usage.length; i++) {
+      let usageDiff = usage[i] - usage[i - 1];
+      const timeDiff = (time[i] - time[i - 1]) / 1000 / 60 / 60; //convert time difference to hours
+      demand.push(usageDiff / timeDiff);
     }
     //remove one from both the usage and demand
-    demand.splice(0,1);
+    demand.splice(0, 1);
     usage.splice(0, 1);
   }
 
   /**
    * Gets the temperature array for the building.  Last number in the array is the current temperature.
    * Build a watch on array for changes.
-   * Tries three times to retrieve the building temperature array before sending an Observable error.
+   * Will wait for 10 seconds to retry if chartData is empty. Once. Otherwise it will just send an error.
+   * Buildingid is not in the chartdata when its lenght is greater than zero an error will be thrown.
+   * It is up the to programer to make sure the
    * @param buildingid a number for the building id.
-   * @returns observable that ether contains the array of temperatures or an error after three attempts.
    */
-  getTemperatureArray(buildingid: number): Observable<any> {
-    return new Observable(obs => {
-      let data;
-      let tries = 0;
-      //create a loop that checks the data every ten seconds if not present.
-      timeout();
-
-      //looping function if no data is found.
-      function timeout() {
-        data = this.chartData.find(d => d.buildingid === buildingid);
-        if (!data) {
-          if (tries++ < 3) {
-            setTimeout(timeout, 10000);
-          } else {
-            obs.error("Tried 3 times to retrieve data without results.  Building not supported or server error.")
-          }
-        } else {
-          obs.next(data.temperature);
-        }
+  getTemperature(buildingid:number) {
+    if(this.chartData){
+      const data = this.chartData.find(d => +d.buildingid === buildingid);
+      if(data){
+        return data.temperature[data.temperature.length - 1];
       }
-    });
+      return 'n/a';
+    }
   }
 
   /**
@@ -128,40 +117,3 @@ export class ChartDataService {
     return throwError(errorMessage);
   }
 }
-
-/**
- * Mock data to use while testing
- */
-const mockServiceData = [{
-  buildingid: 31,
-  createddate: [2, 1, 3],
-  electrical: {
-    usage: [5, 6, 5],
-    demand: [100, 75, 50]
-  },
-  naturalgas: {
-    usage: [50, 60, 100],
-    demand: [4, 20, 15]
-  },
-  water: {
-    usage: [24, 23, 20],
-    demand: [1, 2, 3]
-  },
-  temperature: [50, 55, 54]
-}, {
-  buildingid: 41,
-  createddate: [2, 1, 3],
-  electrical: {
-    usage: [5, 6, 5],
-    demand: [100, 75, 50]
-  },
-  naturalgas: {
-    usage: [50, 60, 100],
-    demand: [4, 20, 15]
-  },
-  water: {
-    usage: [24, 23, 20],
-    demand: [1, 2, 3]
-  },
-  temperature: [50, 55, 54]
-}];
