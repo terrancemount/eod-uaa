@@ -41,7 +41,6 @@ export class ChartComponent implements OnInit, DoCheck {
       //() => console.log(this.config)
       () => {
 
-        console.log(this.config.data.datasets[3].data);
         this.height = window.innerHeight * .70;
         this.width = window.innerWidth * .90
 

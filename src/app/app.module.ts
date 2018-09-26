@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { AngularResizedEventModule } from 'angular-resize-event';
 
 import { AppComponent } from './app.component';
 import { SlideshowComponent } from './slideshow/slideshow.component';
@@ -17,6 +16,9 @@ import { ChartYaxesService } from './services/chart-yaxes.service';
 import { ChartConfigService } from './services/chart-config.service';
 import { BuildingService } from './services/building.service';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,13 +27,13 @@ import { BuildingService } from './services/building.service';
     ChartComponent,
     SensorButtonsComponent,
     TimeBarComponent,
-    HomeComponent
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    AngularResizedEventModule
+    BrowserAnimationsModule
   ],
   providers: [
     ChartDataService,

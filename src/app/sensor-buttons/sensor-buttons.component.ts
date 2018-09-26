@@ -13,12 +13,10 @@ export class SensorButtonsComponent implements OnInit {
   constructor(private chartDatasetService: ChartDatasetService) { }
 
   ngOnInit() {
-    console.log("getting the data");
     this.chartDatasetService.getButtonData(this.buildingid)
     .subscribe(
       data =>{
         this.buttonData = data;
-        console.log(data);
       },
       error => console.log(error)
     )

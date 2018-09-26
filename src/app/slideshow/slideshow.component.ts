@@ -6,8 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./slideshow.component.scss']
 })
 export class SlideshowComponent implements OnInit {
+
+
   constructor() { }
-  
+
   ngOnInit() {
   }
 

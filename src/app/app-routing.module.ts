@@ -13,7 +13,7 @@ import { HomeComponent } from './home/home.component';
 const routes: Routes = [
   {path:'home', component: HomeComponent},
   {path:'building/:id', component: DashboardComponent},
-  {path:'slideshow/:id', component: SlideshowComponent},
+  {path:'slideshow', component: SlideshowComponent},
   {path:'', redirectTo: 'building/31', pathMatch: 'full'},
   {path:'**', redirectTo: 'building/31'}
 
