@@ -3,44 +3,45 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { SlideshowComponent } from './slideshow/slideshow.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChartComponent } from './chart/chart.component';
 import { SensorButtonsComponent } from './sensor-buttons/sensor-buttons.component';
 import { TimeBarComponent } from './time-bar/time-bar.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './home/home.component';
 import { ChartDataService } from './services/chart-data.service';
 import { ChartDatasetService } from './services/chart-dataset.service';
 import { ChartYaxesService } from './services/chart-yaxes.service';
 import { ChartConfigService } from './services/chart-config.service';
 import { BuildingService } from './services/building.service';
-
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { SlideCarouselComponent } from './slide-carousel/slide-carousel.component';
+import { ErrorService } from './services/error.service';
+import { ImageService } from './services/image.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    SlideshowComponent,
     DashboardComponent,
     ChartComponent,
     SensorButtonsComponent,
     TimeBarComponent,
-    HomeComponent,
+    SlideCarouselComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    NgbModule
   ],
   providers: [
     ChartDataService,
     ChartDatasetService,
     ChartYaxesService,
     ChartConfigService,
-    BuildingService
+    BuildingService,
+    ErrorService,
+    ImageService
   ],
   bootstrap: [AppComponent]
 })

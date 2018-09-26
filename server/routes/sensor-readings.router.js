@@ -3,12 +3,11 @@
  */
 
 const express = require('express');
-const executeQuery = require('../database/execute-query');
 const verifyUser = require('../auth/verify-user');
 const mysql = require('mysql');
 const convertBuildingCode = require('../database/convert-building-code');
 
-const routes = () => {
+const routes = (executeQuery) => {
   const router = express.Router();
 
   //get data from the sensor readings table

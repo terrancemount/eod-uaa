@@ -7,11 +7,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  buildingid:number = 0;
+  buildingid:number = 31;
 
 
   constructor(private route: ActivatedRoute) {
-    this.buildingid = +this.route.snapshot.paramMap.get('id');
+    //this.buildingid = +this.route.snapshot.paramMap.get('id');
   }
 
   ngOnInit() {

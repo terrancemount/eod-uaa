@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { SlideshowComponent } from './slideshow/slideshow.component';
-import { HomeComponent } from './home/home.component';
+import { SlideCarouselComponent } from './slide-carousel/slide-carousel.component';
 
 
 
@@ -11,10 +10,10 @@ import { HomeComponent } from './home/home.component';
  * Todo: break up routes into feature modules.
  */
 const routes: Routes = [
-  {path:'home', component: HomeComponent},
-  {path:'building/:id', component: DashboardComponent},
-  {path:'slideshow', component: SlideshowComponent},
-  {path:'', redirectTo: 'building/31', pathMatch: 'full'},
+
+  {path:'building', component: DashboardComponent},
+  {path:'carousel', component: SlideCarouselComponent},
+  {path:'', redirectTo: 'building', pathMatch: 'full'},
   {path:'**', redirectTo: 'building/31'}
 
 ];

@@ -1,14 +1,18 @@
 const mysql = require('mysql');
+const dnsParser = require('dsn-parser');
+
+
+const dns = new dnsParser(process.env.CLEARDB_DATABASE_URL);
 
 /**
  * setup for the mysql database pool to work with the query function below.
  */
 const pool = mysql.createPool({
 	connectionLimit: 10,
-	host: process.env.DATABASE_HOST,
-	user: process.env.DATABASE_USERNAME,
-	password: process.env.DATABASE_PASSWORD,
-	database: process.env.DATABASE_NAME
+	host: dns.get('host'),
+	user: dns.get('user'),
+	password: dns.get('password'),
+	database: dns.get('database')
 });
 
 /**
@@ -23,7 +27,8 @@ function executeQuery(query, res, success) {
 		if (err) {
       connection.release();
       return res.status(500).send("Error while connecting to database.");
-		}
+    }
+    console.log(query);
 		connection.query(query, function (err, rows) {
       connection.release();
       if (err) {

@@ -3,7 +3,7 @@ import { Observable, throwError } from "rxjs";
 import { first, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment'
 import { HttpClient, HttpErrorResponse, } from '@angular/common/http';
-import { forEach } from "@angular/router/src/utils/collection";
+import { ErrorService } from "./error.service";
 
 @Injectable()
 export class ChartDataService {
@@ -12,7 +12,7 @@ export class ChartDataService {
   temperature;
   //maxTicks = 10;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private errorService: ErrorService) { }
 
   getChartData(buildingid: number) {
     return new Observable(obs => {
@@ -26,7 +26,7 @@ export class ChartDataService {
         this.http.get(environment.serverURL + `/api/chart-data/building/${buildingid}/ticks/${this.maxTicks + 1}`)
           .pipe(
             first(),
-            catchError(this.handleError)
+            catchError(this.errorService.handleHttpError)
           )
           .subscribe(
             results => {
@@ -99,21 +99,5 @@ export class ChartDataService {
       }
       return 'n/a';
     }
-  }
-
-  /**
-   * Handle Observable errors.  Todo: need to make a logging report
-   * @param err error from an observable
-   */
-  private handleError(err: HttpErrorResponse) {
-    let errorMessage = "";
-
-    //todo: implement a error loging service here
-    if (err.error instanceof ErrorEvent) {
-      errorMessage = "An error has occured: " + err.error.message;
-    } else {
-      errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-    }
-    return throwError(errorMessage);
   }
 }

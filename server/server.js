@@ -4,9 +4,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 
-const eibRouter = require('./routes/eib.router');
 const sensorReadingRouter = require('./routes/sensor-readings.router');
 const chartDataRouter = require('./routes/chart-data.router');
+const imagesRouter = require('./routes/image.router');
+const executeQuery = require('./database/execute-query');
+
 
 const port = process.env.PORT || 3000;
 
@@ -22,12 +24,10 @@ app.use(function (req, res, next) {
     next();
 });
 
-//load the router for eib
-app.use('/api/eib', eibRouter());
+app.use('/images', imagesRouter());
+app.use('/api/chart-data', chartDataRouter(executeQuery));
 
-app.use('/api/chart-data', chartDataRouter());
-
-app.use('/api/sensor-readings', sensorReadingRouter());
+app.use('/api/sensor-readings', sensorReadingRouter(executeQuery));
 
 //load this if someone hit just /api
 //todo: make an api help page.
