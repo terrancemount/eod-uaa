@@ -4,82 +4,49 @@ import { first } from "rxjs/operators";
 
 @Injectable()
 export class ChartYaxesService {
-  chartYaxes = [{
-    buildingid: 31,
-    yAxes: [{
-      id: 1,
-      position: 'left',
+
+  yAxes = [{
+    id: 1,
+    position: 'left',
+    display: true,
+    scaleLabel: {
       display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Electrical Demand (KW)'
-      }
-    }, {
-      id: 2,
-      position: 'left',
-      display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Natural Gas Demand (CCT / hour)'
-      }
-    }, {
-      id: 3,
-      position: 'right',
-      display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Outside Temperature (\xB0F)'
-      }
-    },  {
-      id: 4,
-      position: 'left',
-      display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Water Usage (Gallons)'
-      }
-    }] //yAxes close
+      labelString: 'Electrical Demand (KW)'
+    }
   }, {
-    buildingid: 41,
-    yAxes: [{
-      id: 5,
-      position: 'left',
+    id: 2,
+    position: 'left',
+    display: false,
+    scaleLabel: {
       display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Electrical Demand (KW)'
-      }
-    }, {
-      id: 6,
-      position: 'left',
+      labelString: 'Natural Gas Demand (CCT / hour)'
+    }
+  }, {
+    id: 3,
+    position: 'left',
+    display: false,
+    scaleLabel: {
       display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Natural Gas Demand (CCT)'
-      }
-    }, {
-      id: 7,
-      position: 'right',
+      labelString: 'Water Usage (Gallons)'
+    }
+  }, {
+    id: 4,
+    position: 'right',
+    display: true,
+    scaleLabel: {
       display: true,
-      scaleLabel: {
-        display: true,
-        labelString: 'Outside Temperature (\xB0F)'
-      }
-    }] //yAxes close
-  }]; //chartYaxis close
+      labelString: 'Outside Temperature (\xB0F)'
+    }
+  }]; //yAxes close
 
-  getChartYaxes(buildingid: number):Observable<any>{
-    return new Observable(obs => {
-      const data = this.chartYaxes.find(d => +d.buildingid=== buildingid);
 
-      if(data){
-        obs.next(data);
-      } else {
-        obs.error("ChartYaxes Error: that building is not supported right now.");
-        //todo: make a http request to get this from the server.
-      }
-      //this will make observable auto close after the first instance of ether next() or error()
-    }).pipe(first());;
+  getSelectedYaxes(){
+      let data = this.yAxes.filter(axis => axis.id === 1 || axis.id === 4);
+      return JSON.parse(JSON.stringify(data));
+
   }
 
+  getAllChartYaxes(){
+    return this.yAxes;
+  }
 }

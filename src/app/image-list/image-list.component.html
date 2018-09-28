@@ -1,0 +1,24 @@
+<div class='container pt-3'>
+  <div class='d-flex justify-content-between p-2'>
+    <span class="display-4">Slide Admin</span>
+
+  </div>
+  <table class='table'>
+    <tr>
+      <th>&nbsp;</th>
+      <th>URL</th>
+      <th>thumbnail</th>
+    </tr>
+
+    <tbody *ngIf='urls'>
+      <tr *ngFor='let url of urls'>
+        <td>
+          <button class='btn btn-lg btn-danger' (click)='deleteSlide(url)'>Delete</button>
+        </td>
+        <td>{{parseFilename(url)}}</td>
+        <td><img [src]='url' /></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>

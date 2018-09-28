@@ -17,6 +17,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { SlideCarouselComponent } from './slide-carousel/slide-carousel.component';
 import { ErrorService } from './services/error.service';
 import { ImageService } from './services/image.service';
+import { ImageListComponent } from './image-list/image-list.component';
+import { FormsModule } from '@angular/forms';
+
 
 
 @NgModule({
@@ -27,12 +30,15 @@ import { ImageService } from './services/image.service';
     SensorButtonsComponent,
     TimeBarComponent,
     SlideCarouselComponent,
+    ImageListComponent,
+
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    FormsModule
   ],
   providers: [
     ChartDataService,

@@ -7,7 +7,7 @@ import { ErrorService } from "./error.service";
 
 @Injectable()
 export class ChartDataService {
-  chartData = [];
+  chartData;
   maxTicks = 7 * 24 * 4;
   temperature;
   //maxTicks = 10;
@@ -16,43 +16,37 @@ export class ChartDataService {
 
   getChartData(buildingid: number) {
     return new Observable(obs => {
-      const data = this.chartData.find(d => +d.buildingid === buildingid);
 
-      if (data) {
-        obs.next(data);
-      } else {
+      //get observable from http module
+      this.http.get(environment.serverURL + `/api/chart-data/building/${buildingid}/ticks/${this.maxTicks + 1}`)
+        .pipe(
+          first(),
+          catchError(this.errorService.handleHttpError)
+        )
+        .subscribe(
+          results => {
 
-        //get observable from http module
-        this.http.get(environment.serverURL + `/api/chart-data/building/${buildingid}/ticks/${this.maxTicks + 1}`)
-          .pipe(
-            first(),
-            catchError(this.errorService.handleHttpError)
-          )
-          .subscribe(
-            results => {
+            //run through all the keys in the results object
+            for (let key in results) {
 
-              //run through all the keys in the results object
-              for (let key in results) {
-
-                //if it has a sub key of usage then send it to the generate demand function.
-                if (results[key]['usage']) { //check if there is a useage.
-                  results[key]['demand'] = []; //create a new array for demand
-                  this.generateDemand(results[key].usage, results[key].demand, results['createddate']);
-                }
+              //if it has a sub key of usage then send it to the generate demand function.
+              if (results[key]['usage']) { //check if there is a useage.
+                results[key]['demand'] = []; //create a new array for demand
+                this.generateDemand(results[key].usage, results[key].demand, results['createddate']);
               }
+            }
 
-              //remove the first instance from the array.
-              results['createddate'].splice(0, 1);
+            //remove the first instance from the array.
+            results['createddate'].splice(0, 1);
 
-              //push onto local varable for later use.
-              this.chartData.push(results);
+            this.chartData = results;
 
-              //return the observable data
-              obs.next(results);
-            },
-            error => console.log("ChartDataService: error with get for building = " + buildingid)
-          );
-      }
+            //return the observable data
+            obs.next(results);
+          },
+          error => console.log("ChartDataService: error with get for building = " + buildingid)
+        );
+
       //this will make observable auto close after the first instance of ether next() or error()
     }).pipe(first());
   }
@@ -91,13 +85,9 @@ export class ChartDataService {
    * It is up the to programer to make sure the
    * @param buildingid a number for the building id.
    */
-  getTemperature(buildingid:number) {
-    if(this.chartData){
-      const data = this.chartData.find(d => +d.buildingid === buildingid);
-      if(data){
-        return data.temperature[data.temperature.length - 1];
-      }
-      return 'n/a';
-    }
+  getTemperature() {
+
+    return this.chartData.temperature[this.chartData.temperature.length - 1];
+
   }
 }

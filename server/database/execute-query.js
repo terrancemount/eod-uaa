@@ -28,7 +28,6 @@ function executeQuery(query, res, success) {
       connection.release();
       return res.status(500).send("Error while connecting to database.");
     }
-    console.log(query);
 		connection.query(query, function (err, rows) {
       connection.release();
       if (err) {

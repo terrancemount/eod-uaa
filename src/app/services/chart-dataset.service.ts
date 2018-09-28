@@ -10,6 +10,8 @@ export class ChartDatasetService {
     datasets: [{
       id: 1,
       sensorcode: 'electrical_demand',
+      chartTitle: 'How much Power does the EIB Need?',
+      chartSubTitle: 'Electrical Demand for One Week.',
       label: 'Electricty Demand',
       borderColor: 'rgb(255, 205, 86)',
       backgroundColor: 'rgba(255, 205, 86, 0.5)',
@@ -19,6 +21,8 @@ export class ChartDatasetService {
     }, {
       id: 2,
       sensorcode: 'naturalgas_demand',
+      chartTitle: 'How much Gas does EIB Need?',
+      chartSubTitle: 'Natural Gas Demand for One Week.',
       label: 'Natural Gas Demand',
       borderColor: 'rgb(255, 99, 132)',
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -26,23 +30,25 @@ export class ChartDatasetService {
       fill: true,
       yAxisID: 2
     }, {
-      id: 4,
+      id: 3,
       sensorcode: 'water_usage',
+      chartTitle: 'How much water does EIB Use?',
+      chartSubTitle: 'Water Usage for One Week.',
       label: 'Water Usage',
       borderColor: 'rgb(65,105,225)',
       backgroundColor: 'rgba(65,105,225, .5)',
       hidden: true,
       fill: true,
-      yAxisID: 4
+      yAxisID: 3
     }, {
-      id: 3,
+      id: 4,
       sensorcode: 'temperature',
       label: 'Outside Temperature',
       borderColor: 'rgb(201, 203, 207)',
       backgroundColor: 'rgb(201, 203, 207)',
       hidden: false,
       fill: false,
-      yAxisID: 3
+      yAxisID: 4
     }]
   }, {
     buildingid: 41,

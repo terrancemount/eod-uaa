@@ -4,24 +4,26 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cloudinary = require('cloudinary');
+
+const url = 'https://engineering-on-display.github.io/carousel';
 
 module.exports = () => {
   const router = express.Router();
 
   router.route('/')
-  .get((req, res)=>{
+    .get((req, res) => {
 
-    //replace this with an http call but this will work for now.
-    fs.readdir(path.join(__dirname, '../../dist/assets/carousel'), (err, files) => {
+      //replace this with an http call but this will work for now.
+      fs.readdir(url, (err, files) => {
 
-      if(err){
-        res.status(500).send("Image Router Error: unable to read directory");
+        if (err) {
+          res.status(500).send("Image Router Error: unable to read directory");
 
-      } else {
-        res.send(files.map(file => `http://localhost:8000/assets/carousel/${file}`));
-      }
+        } else {
+          res.status(200).send(files.map(file => path.join(url, file)));
+        }
+      });
     });
-  })
+
   return router;
 }

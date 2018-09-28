@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/images', imagesRouter());
+
 app.use('/api/chart-data', chartDataRouter(executeQuery));
 
 app.use('/api/sensor-readings', sensorReadingRouter(executeQuery));

@@ -17,6 +17,8 @@ export class TimeBarComponent implements OnInit{
 
   ngOnInit() {
 
+
+
     //set time to now
     this.now = Date.now();
 
@@ -27,13 +29,13 @@ export class TimeBarComponent implements OnInit{
 
     //setup the temperature 5 seconds after page load to allow for server to send data
     setTimeout(()=>{
-      this.temperature = Math.round(this.chartDataService.getTemperature(this.buildingid)) + " \xB0F";
+      this.temperature = Math.round(this.chartDataService.getTemperature()) + " \xB0F";
     }, 5000);
 
 
     //update the temperature every 15 minutes
     setInterval(()=> {
-      this.temperature = Math.round(this.chartDataService.getTemperature(this.buildingid)) + " \xB0F";
+      this.temperature = Math.round(this.chartDataService.getTemperature()) + " \xB0F";
     }, 15 * 60 * 1000); //15 minutes
 
   }

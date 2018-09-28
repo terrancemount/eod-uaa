@@ -4,3 +4,15 @@ html, body{
   height:100%;
 }
 
+.electrical_demand{
+  border-color: rgb(255, 205, 86);
+  background-color: rgba(255, 205, 86, 0.5);
+}
+.naturalgas_demand {
+  border-color: rgb(255, 99, 132);
+  background-color: rgba(255, 99, 132, 0.5);
+}
+.water_usage{
+  border-color: rgb(65,105,225);
+  background-color: rgba(65,105,225, .5);
+}

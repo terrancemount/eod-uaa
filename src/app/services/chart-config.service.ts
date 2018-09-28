@@ -38,9 +38,8 @@ export class ChartConfigService {
         forkJoin(
           this.chartDataService.getChartData(buildingid),
           this.chartDatasetService.getChartDataset(buildingid),
-          this.chartYaxesService.getChartYaxes(buildingid)
         ).subscribe(
-          ([data, dataset, yAxes ]) => {
+          ([data, dataset]) => {
 
 
             //get the default template and load the building id into it.
@@ -50,7 +49,7 @@ export class ChartConfigService {
             //load the template with the obserable data.
             config.data.labels = data['createddate'];
             config.data.datasets = dataset['datasets'];
-            config.options.scales.yAxes = yAxes['yAxes'];
+            config.options.scales.yAxes = this.chartYaxesService.getAllChartYaxes();
 
             //load the data into each dataset based off the sensorcode from the dataset
             config.data.datasets.forEach(set => {
@@ -98,12 +97,14 @@ export class ChartConfigService {
             bottom: 20
           }
         },
-        events:['mouseover', 'mouseout', 'click'],
         lineHeight: 1,
         responsive: true,
         hover: {
           mode: 'nearest',
           intersect: true
+        },
+        legend:{
+          display:false
         },
         title: {
           display: false,
