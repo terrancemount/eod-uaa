@@ -52,7 +52,7 @@ export class SlideCarouselComponent implements AfterViewInit {
         this.chart.showSensor(this.sensorIndex);
       }
 
-      if (this.loopIndex >= this.urls.length){
+      if (this.loopIndex >= this.urls.length * 2){
         this.loopIndex = 0;
       }
 

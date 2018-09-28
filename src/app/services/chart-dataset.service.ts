@@ -12,7 +12,7 @@ export class ChartDatasetService {
       sensorcode: 'electrical_demand',
       chartTitle: 'How much Power does the EIB Need?',
       chartSubTitle: 'Electrical Demand for One Week.',
-      label: 'Electricty Demand',
+      label: 'Electrical Demand',
       borderColor: 'rgb(255, 205, 86)',
       backgroundColor: 'rgba(255, 205, 86, 0.5)',
       fill: true,
