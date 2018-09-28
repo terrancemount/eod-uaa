@@ -29,6 +29,7 @@ export class SlideCarouselComponent implements OnInit {
       .subscribe(data => {
         this.urls = data['images']
       });
+    this.startTimer();
 
   }
 
@@ -49,6 +50,7 @@ export class SlideCarouselComponent implements OnInit {
   }
 
   onClick() {
+    clearInterval(this.timer);
     this.router.navigate(["dashboard"]);
   }
 

@@ -32,7 +32,6 @@ export class SensorButtonsComponent implements OnInit {
 
   toggle(sensor) {
     //reset the timer
-    //this.startTimer();
 
     if(sensor.hidden){
       this.hideAllButSensors(sensor.id);
