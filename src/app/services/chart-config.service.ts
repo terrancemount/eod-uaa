@@ -99,7 +99,7 @@ export class ChartConfigService {
             left: 50,
             right: 50,
             top: 20,
-            bottom: 20
+            bottom: 0
           }
         },
         lineHeight: 1,
