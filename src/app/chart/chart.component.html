@@ -2,15 +2,15 @@
 <div *ngIf='config'>
   <div *ngIf='config.data.datasets[0].hidden === false'>
     <div class="d-flex justify-content-center display-4">How much Power does the EIB Need?</div>
-    <div class='d-flex justify-content-center h5'>Electrical Demand for one week.</div>
+    <div class='d-flex justify-content-center h5'>Electrical Demand for One Week</div>
   </div>
   <div *ngIf='config.data.datasets[1].hidden === false'>
     <div class="d-flex justify-content-center display-4">How much Heat does the EIB Need?</div>
-    <div class='d-flex justify-content-center h5'>Natural Gas Demand for one week.</div>
+    <div class='d-flex justify-content-center h5'>Natural Gas Demand for One Week</div>
   </div>
   <div *ngIf='config.data.datasets[2].hidden === false'>
     <div class="d-flex justify-content-center display-4">How much Water does the EIB Use?</div>
-    <div class='d-flex justify-content-center h5'>Water usage for one week.</div>
+    <div class='d-flex justify-content-center h5'>Water usage for One Week</div>
   </div>
 
 </div>
@@ -18,7 +18,7 @@
   <canvas id='canvas'>{{chart}}</canvas>
 </div>
 
-<div *ngIf='config' class='d-flex justify-content-center'>
+<div *ngIf='config' class='d-flex justify-content-center' id="sensor-buttons">
   <span *ngFor='let sensor of chart.config.data.datasets' class="pl-4 pr-4">
     <button class='btn' [class.electrical_demand]='sensor.sensorcode === "electrical_demand"' [class.naturalgas_demand]='sensor.sensorcode === "naturalgas_demand"'
       [class.water_usage]='sensor.sensorcode === "water_usage"' *ngIf='sensor.sensorcode !== "temperature"' (click)='toggle(sensor)'>{{sensor.label}}</button>

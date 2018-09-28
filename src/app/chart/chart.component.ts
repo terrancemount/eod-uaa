@@ -50,7 +50,7 @@ export class ChartComponent implements OnInit, DoCheck {
       //() => console.log(this.config)
       () => {
 
-        this.height = window.innerHeight * .70;
+        this.height = window.innerHeight - 85 - 50 - 100 -100;
         this.width = window.innerWidth * .90
 
         this.chart = new Chart('canvas', this.config)
