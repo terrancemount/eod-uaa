@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "University of Alaska energy dashboard for the Engineering and Industry Building.",
   "scripts": {
-    "posinstall": "ng build --aot --prod",
+    "postinstall": "ng build --aot --prod",
     "ng": "ng",
     "start": "node server/server.js",
     "prelocal": "ng build",
