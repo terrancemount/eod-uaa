@@ -1,5 +1,4 @@
 const express = require('express');
-const mysql = require('mysql');
 
 /**
  * Returns a router for the chart-data route

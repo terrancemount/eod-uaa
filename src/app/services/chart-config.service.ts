@@ -8,7 +8,9 @@ import { first } from "rxjs/operators";
 
 @Injectable()
 export class ChartConfigService {
-  chartConfig = [];
+  chartConfig;
+  isCurrent = false;
+
 
   constructor(private chartDataService: ChartDataService,
     private chartDatasetService: ChartDatasetService,
@@ -27,11 +29,8 @@ export class ChartConfigService {
    */
   getChartConfig(buildingid: number): Observable<any> {
     return new Observable(obs => {
-      let config = this.chartConfig.find(d => +d.buildingid=== buildingid);
-
-      if (config) {
-        console.log("config = ", config);
-        obs.next(config);
+      if(this.chartConfig && this.chartConfig.buildingid == buildingid && this.isCurrent){
+        obs.next(this.chartConfig);
       } else {
 
 
@@ -43,16 +42,16 @@ export class ChartConfigService {
 
 
             //get the default template and load the building id into it.
-            config = this.getConfigTemplate();
-            config['buildingid'] = buildingid;
+            this.chartConfig = this.getConfigTemplate();
+            this.chartConfig['buildingid'] = buildingid;
 
             //load the template with the obserable data.
-            config.data.labels = data['createddate'];
-            config.data.datasets = dataset['datasets'];
-            config.options.scales.yAxes = this.chartYaxesService.getAllChartYaxes();
+            this.chartConfig.data.labels = data['createddate'];
+            this.chartConfig.data.datasets = dataset['datasets'];
+            this.chartConfig.options.scales.yAxes = this.chartYaxesService.getAllChartYaxes();
 
             //load the data into each dataset based off the sensorcode from the dataset
-            config.data.datasets.forEach(set => {
+            this.chartConfig.data.datasets.forEach(set => {
               const sensorcodes = set.sensorcode.split("_");
 
               //check the sensorcode to see how to add to the config object
@@ -62,7 +61,13 @@ export class ChartConfigService {
                 set['data'] = data[sensorcodes[0]];
               }
             });
-            obs.next(config);
+
+            this.isCurrent = true;
+            setTimeout(()=> {
+              this.isCurrent = false;
+            }, 14 * 60 * 1000); //in 14 minutes they have to get a new config.
+
+            obs.next(this.chartConfig);
           },
           error => console.log("ChartConfigService: observable error", error)
         );
@@ -78,7 +83,7 @@ export class ChartConfigService {
    * Get the chart configuration template to add data to from other services.
    * @returns {object} a template for configration.
    */
-  getConfigTemplate() {
+  private getConfigTemplate() {
     return {
 
       buildingid: -1,

@@ -1,11 +1,10 @@
 <div *ngIf='urls'>
   <div id='carousel-wrapper'>
-    <app-chart (click)='onClick()' [isTimed]='false' class='slide' [sensorIndex]='sensorIndex' [class.m-fadeOut]='!(loopIndex % 2 !== 0)'
+    <app-chart (click)='onClick()' [isTimed]='false' class='slide' [class.m-fadeOut]='!(loopIndex % 2 !== 0)'
       [class.m-fadeIn]='(loopIndex !== 2 * i + 1)'></app-chart>
 
     <div *ngFor='let url of urls let i = index'>
       <div class='slide' [style.background-image]='trustStyle(urls[i])' (click)='onClick()' [class.m-fadeOut]='!(loopIndex == 2 * i) ' [class.m-fadeIn]='(loopIndex == 2 * i)'>
-        <!-- <img [src]='urls[i]' /> -->
       </div>
     </div>
   </div>

@@ -1,74 +1,67 @@
-import { Component, OnInit, Input, DoCheck } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Chart } from '../../../node_modules/chart.js';
 import { ChartConfigService } from '../services/chart-config.service';
-import { BuildingService } from '../services/building.service';
 import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss']
+  styleUrls: ['./chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartComponent implements OnInit, DoCheck {
-  chart;
-  config;
+export class ChartComponent implements OnInit {
+  chart; //holds the chart object
   height;
   width;
-  building;
-  allAxes;
   timer;
-  @Input() sensorIndex = 1;
-  @Input() isTimed = true;
+  @Input() isTimed = true; //default is true.  Used when this is routed to rather then a child component.
+  @Input() buildingid: number = 31; //31 is the default bing now default building
+
+  constructor(private chartConfigService: ChartConfigService,
+    private cdr: ChangeDetectorRef,
+    private router: Router) { }
 
 
-
-  buildingid: number = 31;
-
-  constructor(private chartConfigService: ChartConfigService, private buildingService: BuildingService, private router: Router) { }
-
-
-  ngDoCheck() {
-    if (!this.isTimed) {
-      this.hideAllButSensors(this.sensorIndex);
-    }
-    this.update();
-
-  }
   ngOnInit() {
+    this.setupChart();
 
-    //gets the building object to pull the name out of.
-    this.buildingService.getBuilding(this.buildingid)
-      .subscribe(
-        data => this.building = data,
-        error => console.log(error)
-      )
+    //timer to call setup every 15 minutes.
+    setInterval(()=>{
+      this.setupChart();
+    }, 15 * 60 * 1000);
 
-    this.chartConfigService.getChartConfig(this.buildingid).subscribe(
-      data => this.config = data,
-      error => console.log(error),
-      //() => console.log(this.config)
-      () => {
-
-        this.height = window.innerHeight - 85 - 50 - 100 -100;
-        this.width = window.innerWidth * .90
-
-        this.chart = new Chart('canvas', this.config)
-      }
-    );
+    //Default is yes, A parent has to specify false for this not to be timed.
     if (this.isTimed) {
       this.startTimer();
     }
   }
 
-  update() {
-    if (this.chart)
-      this.chart.update();
+  /**
+   * Gets the data from the ChartConfigService then displays the chart;
+   */
+  setupChart(){
+    let config; //local var to hold the config until chart gets it.
+    this.chartConfigService.getChartConfig(this.buildingid).subscribe(
+      data => config = data,
+      error => console.log(error),
+      () => {
+
+        //i want to set this with css but don't know how, but this works
+        this.height = window.innerHeight - 85 - 50 - 100 -100;
+        this.width = window.innerWidth * .90
+
+        this.chart = new Chart('canvas', config)
+        this.cdr.detectChanges();
+      }
+    );
   }
 
-
-
-  startTimer() {
+  /**
+   * Starts a timer whenever the dashboard is first loaded or restarts
+   * when a user presses a button.
+   */
+  private startTimer() {
     //clear old timer if present
     if (this.timer) {
       clearTimeout(this.timer);
@@ -79,20 +72,45 @@ export class ChartComponent implements OnInit, DoCheck {
     }, 1 * 60 * 1000) //two minute timeout if someone presses it
   }
 
-
-  toggle(sensor) {
+  /**
+   * Turns on the sepecified sensor object. Used by this being a route rather then a child.
+   * @param {object} sensor a reference to the datasets object in the chart object
+   * @return null
+   */
+  turnOn(sensor) {
     //reset the timer
     this.startTimer();
 
     if (sensor.hidden) {
-      this.hideAllButSensors(sensor.id);
+      this.hideAllButSensor(sensor.id);
     }
-
   }
 
-  hideAllButSensors(sensorid: number) {
+  /**
+   * Shows the sensor basied off id.  Used by a parent. Will update chart after.
+   * @param id a number representing the id of the sensor to display
+   */
+  showSensor(id){
+    console.log('show sensor = ', id );
+    //make sure the chart is ready
+    if(this.chart){
+      const sensor = this.chart.config.data.datasets.find(s => s.id === id);
+
+      if(sensor.hidden){
+        this.hideAllButSensor(sensor.id);
+      }
+    }
+  }
+
+  /**
+   * Show only the specified sensor id and the temperature graphs.
+   * This function call hideAllbutYAxis to hide the uneeded yAxes.
+   * This will cause a chart update to happen after all sensors have been set.
+   * @param sensorid a number representing the sensor in the chart object
+   */
+  private hideAllButSensor(sensorid: number) {
     if (this.chart) {
-      this.config.data.datasets.forEach(sensor => {
+      this.chart.config.data.datasets.forEach(sensor => {
         if (sensor.sensorcode === 'temperature') { } //do nothing
         else if (sensorid === sensor.id) {
           sensor.hidden = false;
@@ -100,12 +118,22 @@ export class ChartComponent implements OnInit, DoCheck {
         } else {
           sensor.hidden = true;
         }
-      })
+      });
+
+      //after everything has been set then update the chart
+      this.chart.update();
+      this.cdr.detectChanges();
     }
   }
 
-  hideAllButYaxis(yAxesID: number) {
-    this.config.options.scales.yAxes.forEach(axis => {
+  /**
+   * Shows the specified yAxis and the yAxis for temperature.
+   * This does not call for chart update, the update should happen in
+   * hideAllButSensor
+   * @param yAxesID the yAxes to be shown.
+   */
+  private hideAllButYaxis(yAxesID: number) {
+    this.chart.config.options.scales.yAxes.forEach(axis => {
       if (axis.id === 4) { } //do nothing to temperature
       else if (axis.id === yAxesID) {
         axis.display = true;

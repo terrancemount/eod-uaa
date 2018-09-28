@@ -6,7 +6,6 @@ const app = express();
 
 const sensorReadingRouter = require('./routes/sensor-readings.router');
 const chartDataRouter = require('./routes/chart-data.router');
-const imagesRouter = require('./routes/image.router');
 const executeQuery = require('./database/execute-query');
 
 

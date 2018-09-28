@@ -1,20 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  showSlideShow:boolean = false;
-  isTouched:boolean = false;
-  title = 'EngineeringOnDisplay';
+  title = 'Engineering On Display';
 
-  enableSlideShow(){
-    this.showSlideShow = true;
-  }
-
-  disableSlideShow(){
-    this.showSlideShow = false;
-  }
 }

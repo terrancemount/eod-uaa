@@ -78,7 +78,7 @@ export class ChartDatasetService {
       backgroundColor: 'rgb(201, 203, 207)',
       hidden: false,
       fill: false,
-      yAxisID: 3
+      yAxisID: 4
     }]
   }]
 
@@ -101,55 +101,5 @@ export class ChartDatasetService {
       }
       //this will make observable auto close after the first instance of ether next() or error()
     }).pipe(first());;
-  }
-
-  /**
-   * Gets the dataset array for the buttons.  This function will
-   * retry two times with a two second each time on a failure.
-   * If it fails three times then it will send out an error.
-   * @param building
-   */
-  getButtonData(buildingid: number): Observable<any> {
-    return new Observable(obs => {
-
-      //look for the data on the server.
-      obs.next(this.chartDataset.find(d => +d.buildingid === buildingid));
-
-    }).pipe(
-      map(data => {
-        if(!data){
-          //throw and error if data is null or undefined
-          throw 'ChartDatasetService Error: failed three times to get the ButtonData for buildingid = ' + buildingid;
-        }
-        //else return the data.
-        return data;
-      }),
-      retryWhen(errors =>
-        errors.pipe(
-          delayWhen(() => timer(2000))
-        )
-      ),
-      retry(2),
-      first()
-
-    );
-  }
-  /**
-   * Sets the visablity for the given datasetid.
-   * @param {number} datasetid a number representing the id for the dataset.
-   * @param {boolean} visablity a boolean for turning on or off the visablity of the dataset.
-   */
-  setDatasetVisablity(datasetid: number, visablity: boolean): boolean {
-    let dataset;
-    let index = 0;
-    while (!dataset && index < this.chartDataset.length) {
-      dataset = this.chartDataset[index].datasets.find(d => d.id === datasetid);
-    }
-
-    if (dataset) {
-      dataset.hidden = visablity;
-      return true; //found and set successfully
-    }
-    return false; //not found
   }
 }

@@ -8,9 +8,8 @@ import { ErrorService } from "./error.service";
 @Injectable()
 export class ChartDataService {
   chartData;
-  maxTicks = 7 * 24 * 4;
-  temperature;
-  //maxTicks = 10;
+  maxTicks:number = 7 * 24 * 4;
+
 
   constructor(private http: HttpClient, private errorService: ErrorService) { }
 
@@ -78,16 +77,16 @@ export class ChartDataService {
   }
 
   /**
-   * Gets the temperature array for the building.  Last number in the array is the current temperature.
-   * Build a watch on array for changes.
-   * Will wait for 10 seconds to retry if chartData is empty. Once. Otherwise it will just send an error.
-   * Buildingid is not in the chartdata when its lenght is greater than zero an error will be thrown.
-   * It is up the to programer to make sure the
+   * Gets the current temperature store in the chart data array.
+   * If chart data is not set then it return 212 (boiling in feirenhit).
+   * Zero is a possible temperature so that is not used but boiling will
+   * never be avalid value.
    * @param buildingid a number for the building id.
    */
   getTemperature() {
-
-    return this.chartData.temperature[this.chartData.temperature.length - 1];
-
+    if (this.chartData) {
+      return this.chartData.temperature[this.chartData.temperature.length - 1];
+    }
+    return 212; //invalid boiling point number
   }
 }
