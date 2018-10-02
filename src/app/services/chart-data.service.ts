@@ -67,13 +67,23 @@ export class ChartDataService {
     }
 
     for (let i = demand.length; i < usage.length; i++) {
-      let usageDiff = usage[i] - usage[i - 1];
-      const timeDiff = (time[i] - time[i - 1]) / 1000 / 60 / 60; //convert time difference to hours
-      demand.push(usageDiff / timeDiff);
+      if(usage[i] >= usage[i - 1]){
+        demand.push(this.calcDemand(usage[i - 1], time[i - 1], usage[i], time[i]));
+      } else if(i < usage.length - 1) { //if not at the end of the array then add the next demand to array
+        demand.push(this.calcDemand(usage[i], time[i], usage[i + 1], time[i + 1]));
+      } else { //add the previous answer
+        demand.push(demand[i - 1]);
+      }
     }
     //remove one from both the usage and demand
     demand.splice(0, 1);
     usage.splice(0, 1);
+  }
+
+  calcDemand(useOne, timeOne, useTwo, timeTwo){
+    const usageDiff = useTwo - useOne;
+    const timeDiff = (timeTwo - timeOne) / 1000 / 60 / 60; //convert time difference to hours
+    return usageDiff / timeDiff;
   }
 
   /**
