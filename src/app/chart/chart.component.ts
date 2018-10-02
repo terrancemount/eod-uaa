@@ -15,6 +15,7 @@ export class ChartComponent implements OnInit {
   height;
   width;
   timer;
+  route;
   @Input() isTimed = true; //default is true.  Used when this is routed to rather then a child component.
   @Input() buildingid: number = 31; //31 is the default bing now default building
 
@@ -26,6 +27,7 @@ export class ChartComponent implements OnInit {
   ngOnInit() {
     this.setupChart();
 
+    this.route = this.router.url;
     //timer to call setup every 15 minutes.
     setInterval(()=>{
       this.setupChart();
@@ -35,6 +37,8 @@ export class ChartComponent implements OnInit {
     if (this.isTimed) {
       this.startTimer();
     }
+
+    this.cdr.detectChanges();
   }
 
   /**
@@ -81,7 +85,7 @@ export class ChartComponent implements OnInit {
     //reset the timer
     this.startTimer();
 
-    if (sensor.hidden) {
+    if (sensor.hidden || sensor.sensorcode === 'temperature') {
       this.hideAllButSensor(sensor.id);
     }
   }
@@ -91,7 +95,6 @@ export class ChartComponent implements OnInit {
    * @param id a number representing the id of the sensor to display
    */
   showSensor(id){
-    console.log('show sensor = ', id );
     //make sure the chart is ready
     if(this.chart){
       const sensor = this.chart.config.data.datasets.find(s => s.id === id);
@@ -111,7 +114,11 @@ export class ChartComponent implements OnInit {
   private hideAllButSensor(sensorid: number) {
     if (this.chart) {
       this.chart.config.data.datasets.forEach(sensor => {
-        if (sensor.sensorcode === 'temperature') { } //do nothing
+        if(sensor.sensorcode === 'temperature'){
+          if(sensorid === sensor.id){
+            this.hideAllButYaxis(sensor.yAxisID);
+          }
+        }
         else if (sensorid === sensor.id) {
           sensor.hidden = false;
           this.hideAllButYaxis(sensor.yAxisID);
@@ -134,7 +141,7 @@ export class ChartComponent implements OnInit {
    */
   private hideAllButYaxis(yAxesID: number) {
     this.chart.config.options.scales.yAxes.forEach(axis => {
-      if (axis.id === 4) { } //do nothing to temperature
+      if (axis.id === 4) {} //do nothing to temperature
       else if (axis.id === yAxesID) {
         axis.display = true;
       } else {

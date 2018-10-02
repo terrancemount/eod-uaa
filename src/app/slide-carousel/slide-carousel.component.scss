@@ -23,7 +23,9 @@ img{
   top:0;
   left:0;
   position: absolute;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .hidden{
