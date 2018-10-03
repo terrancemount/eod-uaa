@@ -1,0 +1,26 @@
+#sensor-buttons{
+  height: 70px;
+}
+
+
+#chart-title{
+  height: 70px;
+  width: 100%;
+}
+
+#slideshow-btn{
+  position: absolute;
+  bottom: 20px;
+  left: 20px
+}
+
+#chart-container{
+  height: calc(100vh - 90px - 175px - 70px);
+  width: 100%;
+}
+
+#chart-wrapper{
+  position: relative;
+  height: 100%;
+  width: 100%;
+}

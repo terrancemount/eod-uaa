@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -6,6 +6,7 @@ import { ChartComponent } from '../chart/chart.component';
 
 
 @Component({
+  selector: 'app-carousel',
   templateUrl: './slide-carousel.component.html',
   styleUrls: ['./slide-carousel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

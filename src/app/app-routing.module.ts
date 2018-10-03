@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SlideCarouselComponent } from './slide-carousel/slide-carousel.component';
-import { ChartComponent } from './chart/chart.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 
@@ -11,10 +10,8 @@ import { ChartComponent } from './chart/chart.component';
  */
 const routes: Routes = [
 
-  {path:'dashboard', component: ChartComponent},
-  {path:'carousel', component: SlideCarouselComponent},
-  {path:'', redirectTo: 'dashboard', pathMatch: 'full'},
-  {path:'**', redirectTo: 'dashboard'}
+  {path:'', redirectTo: 'carousel', pathMatch: 'full'},
+  {path:'**', redirectTo: 'carousel'}
 
 ];
 

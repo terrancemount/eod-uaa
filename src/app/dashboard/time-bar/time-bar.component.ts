@@ -1,5 +1,5 @@
 import { Component, OnInit, DoCheck, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ChartDataService } from '../services/chart-data.service';
+import { ChartDataService } from '../../services/chart-data.service';
 
 @Component({
   selector: 'app-time-bar',

@@ -1,0 +1,15 @@
+<div id="wrapper">
+  <div id="header">
+    <img src='../assets/img/CollegeOfEngineering-GG-Rvrs.png' height='60px'>
+  </div>
+
+  <div id="body">
+    <app-chart *ngIf='isDashboard'></app-chart>
+    <app-carousel *ngIf='!isDashboard'></app-carousel>
+  </div>
+
+  <div id="footer">
+   <app-time-bar></app-time-bar>
+  </div>
+
+</div>

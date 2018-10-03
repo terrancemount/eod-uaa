@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Chart } from '../../../node_modules/chart.js';
-import { ChartConfigService } from '../services/chart-config.service';
+import { Chart } from '../../../../node_modules/chart.js';
+import { ChartConfigService } from '../../services/chart-config.service';
 import { Router } from '@angular/router';
 
 
@@ -51,9 +51,6 @@ export class ChartComponent implements OnInit {
       error => console.log(error),
       () => {
 
-        //i want to set this with css but don't know how, but this works
-        this.height = window.innerHeight - 85 - 50 - 100 -100;
-        this.width = window.innerWidth * .90
 
         this.chart = new Chart('canvas', config)
         this.cdr.detectChanges();
